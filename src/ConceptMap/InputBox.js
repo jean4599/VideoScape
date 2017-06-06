@@ -105,12 +105,15 @@ export default class InputBox extends Component{
 		} 
 	}
 	addNode(){
-		var p = this.getNewPosition();
-		var node = {x: p.x, y: p.y}
-		node.label = this.textfield.getValue();
-		node.editable = true;
-		this.props.handleNewNode(node);
-		this.textfield.getInputNode().value = '';
+		var value = this.textfield.getValue();
+		if(value){
+			var p = this.getNewPosition();
+			var node = {x: p.x, y: p.y}
+			node.label = value;
+			node.editable = true;
+			this.props.handleNewNode(node);
+			this.textfield.getInputNode().value = '';
+		}
 	}
 	focusTextField(){
 		//console.log('focus')

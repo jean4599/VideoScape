@@ -36,6 +36,13 @@
 [class*="col-"]{
     height:100%;
 }
+.map-info{
+  z-index: 4;
+  float: right;
+  position: fixed;
+  top:50px;
+  right:50px;
+}
 .save-map{
   float:right;
   z-index: 2;
@@ -52,7 +59,7 @@
 }
 .color-code{
   display: inline-block;
-  margin: 0 10px;
+  margin: 0 5px;
 }
 .color-code p{
   display: inline-flex;

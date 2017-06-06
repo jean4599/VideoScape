@@ -55,11 +55,13 @@ class App extends Component {
       var nodes = []
       snapshot.forEach(function(childSnapshot){
         //console.log(childSnapshot.val())
+        //var result = childSnapshot.val()
         nodes.push(childSnapshot.val())
       })
-      
+      console.log(nodes)
       firebase.database().ref(REF.Link).once('value').then((snapshot)=>{
         const edges = toArray(snapshot.val());
+        console.log(edges)
         this.setState({
           tree: {
             nodes: nodes,
@@ -145,20 +147,12 @@ class App extends Component {
             onRequestClose={this.handleSnackbarClose}
           />
         </div>
-        <div>
+        <div className='map-info'>
           <FlatButton
                 icon={<HelpIcon />}
-                style={{float:'right', minWidth:'36px'}}
+                label='Help'
+                style={{float:'right', minWidth:'36px', display:'inline'}}
                 onTouchTap={this.handleToggle}/>
-          <Drawer
-                docked={false}
-                width={500}
-                open={this.state.helpOpen}
-                openSecondary={true}
-                onRequestChange={(helpOpen) => this.setState({helpOpen})}
-              >
-              <Help />
-          </Drawer>
           <ColorCode style={{float:'right', zIndex: 2, padding:'10px'}}/>
         </div>
         <SplitPane split="vertical" minSize='30%' maxSize='70%' defaultSize='53%'>
@@ -178,6 +172,15 @@ class App extends Component {
           </div>
      
         </SplitPane>
+        <Drawer
+                docked={false}
+                width={500}
+                open={this.state.helpOpen}
+                openSecondary={true}
+                onRequestChange={(helpOpen) => this.setState({helpOpen})}
+              >
+              <Help />
+          </Drawer>
       </div>
     );
   }

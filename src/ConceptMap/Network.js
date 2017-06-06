@@ -204,6 +204,7 @@ export default class Network extends Component {
 	      },
 	      videoTime,
 	    } = nextProps;
+
 	    if(!arraysEqual(nodes,this.props.graphData.nodes)){
 	    	console.log('new props nodes')
 	    	this.x = -this.network.getViewPosition().x + 50
@@ -215,6 +216,7 @@ export default class Network extends Component {
 					n.y = p.y;
 					return n
 	    		}
+	    		return n
 	    	})
 	    	this.nodes.update(p_nodes.concat(this.state.nodes.get()));
 	    	//check and set Position
