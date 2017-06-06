@@ -13,7 +13,9 @@ export default class Help extends Component{
 
 				現在我們的系統有了一組由10個學生的概念圖整合產生的概念，
 
-				請您將這些概念連接起來，組成您的概念圖。</p>
+				請您將這些概念連接起來，組成您的概念圖:)
+	    		最後別忘了儲存喔！
+	    		</p>
 
 	        	<h3 id="what-can-i-do-">What can I do?</h3>
 				<h4 id="improve-the-concept-map-by-">Generate a concept map by...</h4>

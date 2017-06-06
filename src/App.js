@@ -78,6 +78,7 @@ class App extends Component {
   //   });
   }
   saveConceptMap(){
+    if(this.name.value=='')alert('We need your name to save the data')
     const conceptMapData = this.conceptmap.getNetworkData();
     firebase.database().ref(this.name.value).set(conceptMapData, (error)=>{
       if(error){
