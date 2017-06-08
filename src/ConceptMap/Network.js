@@ -56,7 +56,8 @@ export default class Network extends Component {
 	addNode(node){
 		let nodes = this.state.nodes;
 		let time = this.props.getTimeStamp(); //add timestamp of the current video play time
-		node.time = time;
+		node.time = time.duration;
+		console.log(time)
         nodes.add(node);
         
        	this.setState({
