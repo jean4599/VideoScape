@@ -102,7 +102,7 @@ export default class ConceptMap extends Component {
 	            		editingEdge={this.state.editingEdge}
 	            		endEditEdgeMode={this.endEditEdgeMode}/>
 	            	<div className='prompt' style={{display:(this.state.editingEdge==true)?'block':'none'}}>
-						Click on the node and drag the edge to connect them
+						Click on the starting concept and drag the edge to connect to another concept
 					</div>
 	            </div>
             	<div style={{width:'100%', height:'6%'}}>
