@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types'
 import SplitPane from 'react-split-pane';
 import Drawer from 'material-ui/Drawer';
 import Snackbar from 'material-ui/Snackbar';
@@ -9,8 +8,9 @@ import './SplitPanel.css';
 import ConceptMap from './ConceptMap';
 import Help from './Help'
 import ColorCode from './ColorCode';
+import ProgressStepper from './ProgressStepper.js'
 import VideoPlayer from './Video/VideoPlayer'
-import {saveNode, saveLink, REF} from './Firebase';
+import {REF} from './Firebase';
 import firebase from 'firebase'  
 import {toArray} from './utils'
 import RaisedButton from 'material-ui/RaisedButton';
@@ -58,10 +58,8 @@ class App extends Component {
         //var result = childSnapshot.val()
         nodes.push(childSnapshot.val())
       })
-      console.log(nodes)
       firebase.database().ref(REF.Link).once('value').then((snapshot)=>{
         const edges = toArray(snapshot.val());
-        console.log(edges)
         this.setState({
           tree: {
             nodes: nodes,
@@ -80,7 +78,7 @@ class App extends Component {
   //   });
   }
   saveConceptMap(){
-    if(this.name.value=='')alert('We need your name to save the data')
+    if(this.name.value==='')alert('We need your name to save the data')
     const conceptMapData = this.conceptmap.getNetworkData();
     firebase.database().ref(this.name.value).set(conceptMapData, (error)=>{
       if(error){
@@ -137,41 +135,48 @@ class App extends Component {
   render() {
     return (
       <div className='container'>
-        <div className='save-map'>
-          <input placeholder='Your Name' ref={n=>{this.name = n}}></input>
-          <RaisedButton label="Save my concept map" onClick={()=>this.saveConceptMap()}/>
-          <Snackbar
-            open={this.state.snakbarOpen}
-            message="Your concept map is saved! Good job :)"
-            autoHideDuration={4000}
-            onRequestClose={this.handleSnackbarClose}
-          />
-        </div>
-        <div className='map-info'>
-          <FlatButton
-                icon={<HelpIcon />}
-                label='Help'
-                style={{float:'right', minWidth:'36px', display:'inline'}}
-                onTouchTap={this.handleToggle}/>
-          <ColorCode style={{float:'right', zIndex: 2, padding:'10px'}}/>
-        </div>
-        <SplitPane split="vertical" minSize='30%' maxSize='70%' defaultSize='53%'>
-         
-          <div className='container'>
-            <VideoPlayer className='video' courseURL={this.state.videoURL}  width={'100%'} height={'100%'} controls={true} ref='player'
-            updateVideoTime={this.updateVideoTime}/>
+        <div className='top'>
+          <div className='save-map'>
+            <input placeholder='Your Name' ref={n=>{this.name = n}}></input>
+            <RaisedButton label="Save my concept map" onClick={()=>this.saveConceptMap()}/>
+            <Snackbar
+              open={this.state.snakbarOpen}
+              message="Your concept map is saved! Good job :)"
+              autoHideDuration={4000}
+              onRequestClose={this.handleSnackbarClose}
+            />
           </div>
-
-          <div className='container'>
-
-            <ConceptMap className="output" graphData={this.state.tree} colors={this.state.colors}
-            jumpToVideoTime={this.jumpToVideoTime}
-            getTimeStamp={this.getTimeStamp}
-            videoTime={this.state.videoTime}
-            ref={o=>{this.conceptmap = o}}/>
+          <ProgressStepper className='progressStepper'/>
+          <div className='map-info'>
+            <FlatButton
+                  icon={<HelpIcon />}
+                  label='Help'
+                  style={{float:'right', minWidth:'36px', display:'inline'}}
+                  onTouchTap={this.handleToggle}/>
+            <ColorCode style={{float:'right', zIndex: 2, padding:'10px'}}/>
           </div>
-     
-        </SplitPane>
+        </div>
+
+        <div className='bottom'>
+          <SplitPane split="vertical" minSize='30%' maxSize='70%' defaultSize='53%'>
+           
+            <div className='container'>
+              <VideoPlayer className='video' courseURL={this.state.videoURL}  width={'100%'} height={'100%'} controls={true} ref='player'
+              updateVideoTime={this.updateVideoTime}/>
+            </div>
+
+            <div className='container'>
+
+              <ConceptMap className="output" graphData={this.state.tree} colors={this.state.colors}
+              jumpToVideoTime={this.jumpToVideoTime}
+              getTimeStamp={this.getTimeStamp}
+              videoTime={this.state.videoTime}
+              ref={o=>{this.conceptmap = o}}/>
+            </div>
+       
+          </SplitPane>
+        </div>
+
         <Drawer
                 docked={false}
                 width={500}

@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import vis from 'vis';
 import PropTypes from 'prop-types';
-import './Network.css';
-import {arraysEqual} from '../utils'
+import {arraysEqual} from '../utils';
+import './style.css'
 import {propTypes, defaultProps} from './parameters';
 
 const mergeData = (prev, next) => {
@@ -182,6 +182,7 @@ export default class Network extends Component {
 		        }
 		        else{ //If click edge or canvas
 		        	this.props.prepareAddNode();
+		        	console.log('bebe')
 		        }
 		    	
 		        clicks = 0;

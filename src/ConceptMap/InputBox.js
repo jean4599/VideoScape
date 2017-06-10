@@ -136,13 +136,14 @@ export default class InputBox extends Component{
 	}
 	render(){
 		return (
-			<div style={this.props.style}>
+			<div className={this.props.className}>
 				<TextField
 					style={{
 			    		position: 'absolute',
 						bottom: '5px',
 						left: '5px',
-						height: '60px'
+						height: '60px',
+						width:'65%',
 					}}
 					hintStyle={{
 						bottom:'5px',
@@ -162,6 +163,7 @@ export default class InputBox extends Component{
 			    		position: 'absolute',
 						bottom: '0px',
 						right: '10px',
+						width:'30%',
 						display: (this.props.mode==='add-node')?'block':'none'
 						}}
 				  labelStyle={{textTransform:'none'}}
@@ -169,6 +171,30 @@ export default class InputBox extends Component{
 			      labelPosition="after"
 			      disabled={this.props.disabled}
 			      onClick={this.addNode}/>
+				<RaisedButton style={{
+							position: 'absolute',
+							bottom: '0px',
+							right: '10px',
+							width:'30%',
+							display: (this.props.mode==='edit-node')?'block':'none'
+							}}
+					labelStyle={{textTransform:'none'}}
+					label='Delete Node'
+					labelPosition="after"
+					secondary={true}
+					onClick={this.props.deleteNode}/>
+				<RaisedButton style={{
+							position: 'absolute',
+							bottom: '0px',
+							right: '10px',
+							width:'30%',
+							display: (this.props.mode==='edit-edge')?'block':'none'
+							}}
+					labelStyle={{textTransform:'none'}}
+					label='Delete Edge'
+					labelPosition="after"
+					secondary={true}
+					onClick={this.props.deleteEdge}/>
 			</div>
 			)
 	}

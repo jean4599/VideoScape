@@ -50,7 +50,7 @@ export default class ConceptMap extends Component {
 		showInputBox:'none',
 	}
 	prepareAddNode(){
-		this.setState({showInputBox:'block', mode:'add-node'})
+		this.setState({showInputBox:'block', mode:'add-node',editingEdge:false})
 	}
 	prepareEditNode(nodeData){
 		if(nodeData){
@@ -101,26 +101,29 @@ export default class ConceptMap extends Component {
 	            		videoTime={this.props.videoTime}
 	            		editingEdge={this.state.editingEdge}
 	            		endEditEdgeMode={this.endEditEdgeMode}/>
+	            	<div className='prompt' style={{display:(this.state.editingEdge==true)?'block':'none'}}>
+						Click on the node and drag the edge to connect them
+					</div>
 	            </div>
             	<div style={{width:'100%', height:'6%'}}>
-					<InputBox style={{	width:'400px',
-									height:'36px',
-									position: 'absolute',
-									bottom: '10px',
-									left: '10px'}}
+					<InputBox
+						className='inputbox'
 						mode={this.state.mode}
 						nodeData={this.state.nodeData}
 						edgeData={this.state.edgeData}
 						handleNewNode={this.addNode}
 						handleEditNode={this.editNode}
 						handleEditEdge={this.editEdge}
+						deleteEdge={this.deleteEdge}
+						deleteNode={this.deleteNode}
 						disabled={this.state.editingEdge}
 						ref={input=>{this.inputBox = input}}/>
 					<RaisedButton style={{
+									width:'30%',
 									position: 'absolute',
 									bottom: '10px',
 									right: '10px',
-									display: (this.state.mode==='add-node')?'block':'none'
+									display: 'block',
 									}}
 						labelStyle={{textTransform:'none'}}
 				      label={buttonLabel['add-edge']}
@@ -128,28 +131,6 @@ export default class ConceptMap extends Component {
 				      primary={true}
 				      disabled={this.state.editingEdge}
 				      onClick={this.startEditEdgeMode}/>
-			      <RaisedButton style={{
-								position: 'absolute',
-								bottom: '10px',
-								right: '10px',
-								display: (this.state.mode==='edit-node')?'block':'none'
-								}}
-					labelStyle={{textTransform:'none'}}
-			      	label={buttonLabel['delete-node']}
-			      	labelPosition="after"
-			      	secondary={true}
-			      	onClick={this.deleteNode}/>
-			      <RaisedButton style={{
-								position: 'absolute',
-								bottom: '10px',
-								right: '10px',
-								display: (this.state.mode==='edit-edge')?'block':'none'
-								}}
-					labelStyle={{textTransform:'none'}}
-			      	label={buttonLabel['delete-edge']}
-			      	labelPosition="after"
-			      	secondary={true}
-			      	onClick={this.deleteEdge}/>
 			      </div>
 		    </div>
 			)
