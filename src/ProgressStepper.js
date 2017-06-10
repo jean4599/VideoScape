@@ -1,7 +1,4 @@
 import React from 'react';
-import Badge from 'material-ui/Badge';
-import IconButton from 'material-ui/IconButton';
-import UploadIcon from 'material-ui/svg-icons/action/info-outline';
 import {
   Step,
   Stepper,
@@ -19,7 +16,14 @@ class HorizontalLinearStepper extends React.Component {
     stepIndex: 1,
   };
   onMouseOver(n){
-    alert(n)
+    switch (n){
+      case 1:
+        break;
+      case 2:
+        break;
+      case 3:
+        break;
+    }
   }
   render() {
     const {finished, stepIndex} = this.state;
@@ -29,13 +33,13 @@ class HorizontalLinearStepper extends React.Component {
       <div className={this.props.className}>
         <Stepper activeStep={stepIndex}>
           <Step>
-            <StepLabel>Find key concepts in the video</StepLabel>
+            <StepLabel onMouseOver={()=>this.onMouseOver(1)}>Find key concepts in the video</StepLabel>
           </Step>
           <Step>
-            <StepLabel>Link the concepts</StepLabel>
+            <StepLabel onMouseOver={()=>this.onMouseOver(2)}>Link the concepts</StepLabel>
           </Step>
           <Step>
-            <StepLabel>Add link phrase to the links</StepLabel>
+            <StepLabel onMouseOver={()=>this.onMouseOver(3)}>Add link phrase to the links</StepLabel>
           </Step>
         </Stepper>
       </div>
