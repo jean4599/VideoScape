@@ -106,23 +106,23 @@ export default class ConceptMap extends Component {
 	render(){
 		var wrapper=null;
 		var chips = null;
-		if(this.state.mode=='edit-edge'){
-			var data;
-			if(this.state.edgeData.id in this.state.linkphrase){
-	            data = this.state.linkphrase[this.state.edgeData.id]
-	            data = toArray(data)
-	            data.sort(compare)
-	            data = data.map((d)=>{return d['label']})
-	        }else{
-	        	data = this.state.linkphrase['default']
-	        }
-	        console.log(data)
-			chips = data.map((d, i)=>{
-				return(
-					<Chip onTouchTap={()=>this.clickChip(d)} style={{margin:'4px'}} key={i}>{d}</Chip>
-	        	)})
-			wrapper = <div className='chip-wrapper'> Link phrase examples: {chips} </div>
-		}
+		// if(this.state.mode=='edit-edge'){
+		// 	var data;
+		// 	if(this.state.edgeData.id in this.state.linkphrase){
+	 //            data = this.state.linkphrase[this.state.edgeData.id]
+	 //            data = toArray(data)
+	 //            data.sort(compare)
+	 //            data = data.map((d)=>{return d['label']})
+	 //        }else{
+	 //        	data = this.state.linkphrase['default']
+	 //        }
+	 //        console.log(data)
+		// 	chips = data.map((d, i)=>{
+		// 		return(
+		// 			<Chip onTouchTap={()=>this.clickChip(d)} style={{margin:'4px'}} key={i}>{d}</Chip>
+	 //        	)})
+		// 	wrapper = <div className='chip-wrapper'> Link phrase examples: {chips} </div>
+		// }
 		return (
 			<div className={this.props.className}>
 				<div style={{width:'100%', height:'95%'}}>
