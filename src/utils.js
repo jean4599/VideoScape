@@ -38,6 +38,13 @@ function clone(obj) {
     }
     return copy;
 }
+export function compare(a,b) {
+  if (a.num < b.num)
+    return -1;
+  if (a.num > b.num)
+    return 1;
+  return 0;
+}
 export function arraysEqual(a, b) {
   if (a === b) return true;
   if (a == null || b == null) return false;

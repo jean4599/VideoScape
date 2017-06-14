@@ -182,7 +182,6 @@ export default class Network extends Component {
 		        }
 		        else{ //If click edge or canvas
 		        	this.props.prepareAddNode();
-		        	console.log('bebe')
 		        }
 		    	
 		        clicks = 0;

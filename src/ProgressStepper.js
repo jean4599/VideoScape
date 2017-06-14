@@ -13,7 +13,7 @@ class HorizontalLinearStepper extends React.Component {
   }
   state = {
     finished: false,
-    stepIndex: 1,
+    stepIndex: 2,
   };
   onMouseOver(n){
     switch (n){
@@ -39,7 +39,7 @@ class HorizontalLinearStepper extends React.Component {
             <StepLabel onMouseOver={()=>this.onMouseOver(2)}>Link the concepts</StepLabel>
           </Step>
           <Step>
-            <StepLabel onMouseOver={()=>this.onMouseOver(3)}>Add link phrase to the links</StepLabel>
+            <StepLabel onMouseOver={()=>this.onMouseOver(3)}>Revise links & Add link phrases</StepLabel>
           </Step>
         </Stepper>
       </div>

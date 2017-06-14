@@ -135,9 +135,9 @@ export default class InputBox extends Component{
 		return {x:x, y:y}
 	}
 	render(){
-		return (
-			<div className={this.props.className}>
-				<TextField
+		var textfield = null;
+		if(this.props.mode!='none'){
+			textfield = <TextField
 					style={{
 			    		position: 'absolute',
 						bottom: '5px',
@@ -159,6 +159,12 @@ export default class InputBox extends Component{
 			      floatingLabelFixed={true}
 			      onChange={this.onChange}
 			      ref={t=>{this.textfield = t}}/>
+		}else{
+			textfield = <TextField className='textField' style={{display:'none'}} ref={t=>{this.textfield = t}}/>
+		}
+		return (
+			<div className={this.props.className}>
+				{textfield}
 			    <RaisedButton style={{
 			    		position: 'absolute',
 						bottom: '0px',
@@ -191,7 +197,7 @@ export default class InputBox extends Component{
 							display: (this.props.mode==='edit-edge')?'block':'none'
 							}}
 					labelStyle={{textTransform:'none'}}
-					label='Delete Edge'
+					label='Delete Link'
 					labelPosition="after"
 					secondary={true}
 					onClick={this.props.deleteEdge}/>
