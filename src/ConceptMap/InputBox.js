@@ -12,7 +12,7 @@ const TEXT={
 		floatingLabelText:"Edit the concpet"
 	},
 	'edit-edge':{
-		hintText:"",
+		hintText:"ex: has, is, comes from",
 		floatingLabelText:"Edit the link phrase"
 	}
 }
