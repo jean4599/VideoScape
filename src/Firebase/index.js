@@ -15,8 +15,8 @@ import firebase from 'firebase'
 export default firebase
 
 export const REF = {
-  Node: '/Data/nodes',
-  Link: '/Data/edges',
+  Node: '/result/John Warren/nodes',
+  Link: '/result/John Warren/edges',
   Video: '/video',
 }
 
