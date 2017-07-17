@@ -1,14 +1,13 @@
 import firebase from 'firebase'  
 
  // Initialize Firebase
-  //AWG
  var config = {
-    apiKey: "AIzaSyB4sv77BJCJMgeVBNBhaObSeE0niTXcvD0",
-    authDomain: "vision-linkphrase-awg.firebaseapp.com",
-    databaseURL: "https://vision-linkphrase-awg.firebaseio.com",
-    projectId: "vision-linkphrase-awg",
-    storageBucket: "vision-linkphrase-awg.appspot.com",
-    messagingSenderId: "971148822809"
+    apiKey: "AIzaSyBHDQZBVBpXTHp0S0oJN-XS0Qj_pWdmrSw",
+    authDomain: "videoscape-b857c.firebaseapp.com",
+    databaseURL: "https://videoscape-b857c.firebaseio.com",
+    projectId: "videoscape-b857c",
+    storageBucket: "videoscape-b857c.appspot.com",
+    messagingSenderId: "719154567638"
   };
   firebase.initializeApp(config);
 

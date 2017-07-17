@@ -13,7 +13,7 @@ class HorizontalLinearStepper extends React.Component {
   }
   state = {
     finished: false,
-    stepIndex: 2,
+    stepIndex: this.props.stage,
   };
   onMouseOver(n){
     switch (n){
@@ -31,7 +31,7 @@ class HorizontalLinearStepper extends React.Component {
 
     return (
       <div className={this.props.className}>
-        <Stepper activeStep={stepIndex}>
+        <Stepper activeStep={this.props.stage-1}>
           <Step>
             <StepLabel onMouseOver={()=>this.onMouseOver(1)}>Find key concepts in the video</StepLabel>
           </Step>

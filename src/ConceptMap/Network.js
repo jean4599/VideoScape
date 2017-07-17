@@ -175,6 +175,7 @@ export default class Network extends Component {
 		        }
 		        else if(params['edges'].length > 0){
 		        	const edgeId = params['edges'][0];
+		        	console.log(edgeId)
 		        	const edge = this.edges.get(edgeId)
 		        	if(edge){
 		        		this.props.prepareEditEdge(edge);
@@ -301,7 +302,7 @@ export default class Network extends Component {
 	}
 	render(){
 		return (
-				<div className={this.props.className} id='network' ref={container=>{this.container = container}} />
+				<div style={this.props.style} id='network' ref={container=>{this.container = container}} />
 			)
 	}
 }

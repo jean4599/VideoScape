@@ -138,6 +138,7 @@ export default class InputBox extends Component{
 		var textfield = null;
 		if(this.props.mode!='none'){
 			textfield = <TextField
+					id='input'
 					style={{
 			    		position: 'absolute',
 						bottom: '5px',
@@ -160,7 +161,7 @@ export default class InputBox extends Component{
 			      onChange={this.onChange}
 			      ref={t=>{this.textfield = t}}/>
 		}else{
-			textfield = <TextField className='textField' style={{display:'none'}} ref={t=>{this.textfield = t}}/>
+			textfield = <TextField id='input' className='textField' style={{display:'none'}} ref={t=>{this.textfield = t}}/>
 		}
 		return (
 			<div className={this.props.className}>

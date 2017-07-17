@@ -5,6 +5,10 @@ import Snackbar from 'material-ui/Snackbar';
 import FlatButton from 'material-ui/FlatButton';
 import HelpIcon from 'material-ui/svg-icons/action/help-outline';
 import './SplitPanel.css';
+import Workflow from './Workflow'
+import Stage1 from './Stage1';
+import Stage2 from './Stage2';
+import Stage3 from './Stage3';
 import ConceptMap from './ConceptMap';
 import Help from './Help'
 import ColorCode from './ColorCode';
@@ -24,7 +28,6 @@ class App extends Component {
     super(props);
     this.getTimeStamp = this.getTimeStamp.bind(this);
     this.updateVideoTime = this.updateVideoTime.bind(this);
-    this.getVideo = this.getVideo.bind(this);
 
     this.handleDragStart = this.handleDragStart.bind(this);
     this.handleDragEnd = this.handleDragEnd.bind(this);
@@ -32,8 +35,6 @@ class App extends Component {
     this.jumpToVideoTime = this.jumpToVideoTime.bind(this);
 
     this.saveConceptMap = this.saveConceptMap.bind(this);
-
-    this.getVideo();
   }
   state = {
     tree: {
@@ -48,9 +49,23 @@ class App extends Component {
     snakbarOpen:false,
     helpOpen:true,
   }
-  componentDidMount() {
-    //get initial nodes and links from firebase
+  componentWillMount() {
+    //Step1: get course ID
+    const courseId = this.props.match.params.course;
+    this.setState({courseId: courseId})
     
+    //Step2: get workflow stage
+    firebase.database().ref(courseId+'/stage/').once('value').then((snapshot)=>{
+        console.log('course: '+this.props.courseId+' stage: '+snapshot.val())
+        this.setState({stage: snapshot.val()})
+    })
+    //Step3: get video url
+    firebase.database().ref(courseId+'/video').once('value').then((snapshot)=>{
+      console.log('video: ',snapshot.val())
+      this.setState({videoURL: snapshot.val()})
+    })
+
+    //get initial nodes and links from firebase
     firebase.database().ref(REF.Node).orderByChild("time").once('value').then((snapshot)=>{
       var nodes = []
       snapshot.forEach(function(childSnapshot){
@@ -78,22 +93,27 @@ class App extends Component {
   //   });
   }
   saveConceptMap(){
-    if(this.name.value==='')alert('We need your name to save the data')
     const conceptMapData = this.conceptmap.getNetworkData();
-    firebase.database().ref('result/'+this.name.value).set(conceptMapData, (error)=>{
-      if(error){
-      //do something if save failed
-      }else{
-        this.setState({snakbarOpen:true})
+    //check all the labels
+    var links = conceptMapData.edges;
+    var flag = false;
+    for (var link in links){
+      if(!('label' in links[link])){
+        flag = true;
+        break;
       }
-    })
-  }
-  //get the video URL from firebase
-  getVideo(){
-    firebase.database().ref(REF.Video).once('value').then((snapshot)=>{
-      console.log('video: ',snapshot.val())
-      this.setState({videoURL: snapshot.val()})
-    })
+    }
+    if(this.name.value==='')alert('We need your name to save the data')
+    else if(flag)alert('Each link should has a link phrase');
+    else{
+       firebase.database().ref('result/'+this.name.value).set(conceptMapData, (error)=>{
+        if(error){
+        //do something if save failed
+        }else{
+          this.setState({snakbarOpen:true})
+        }
+      })
+    }
   }
   getTimeStamp(){
     return this.refs.player.getPlayedTime();
@@ -134,8 +154,8 @@ class App extends Component {
 
   render() {
     return (
-      <div className='container'>
-        <div className='top'>
+      <div className='flex-column' style={{height:'100%', padding:'20px'}}>
+        <div className='flex' style={{flexBasis:'100px'}}>
           <div className='save-map'>
             <input placeholder='Your Name' ref={n=>{this.name = n}}></input>
             <RaisedButton label="Save my concept map" onClick={()=>this.saveConceptMap()}/>
@@ -146,33 +166,49 @@ class App extends Component {
               onRequestClose={this.handleSnackbarClose}
             />
           </div>
-          <ProgressStepper className='progressStepper'/>
+          <ProgressStepper className='progressStepper' stage={this.state.stage}/>
           <div className='map-info'>
             <FlatButton
                   icon={<HelpIcon />}
                   label='Help'
                   style={{float:'right', minWidth:'36px', display:'inline'}}
                   onTouchTap={this.handleToggle}/>
-            <ColorCode style={{float:'right', zIndex: 2, padding:'10px'}}/>
           </div>
         </div>
 
-        <div className='bottom'>
+        <div className='flex' style={{flex:'1 1 100%'}}>
           <SplitPane split="vertical" minSize='30%' maxSize='70%' defaultSize='53%'>
            
-            <div className='container'>
-              <VideoPlayer className='video' courseURL={this.state.videoURL}  width={'100%'} height={'100%'} controls={true} ref='player'
-              updateVideoTime={this.updateVideoTime}/>
-            </div>
+            <VideoPlayer className='video' courseURL={this.state.videoURL}  width={'100%'} height={'100%'} controls={true} ref='player'
+            updateVideoTime={this.updateVideoTime}/>
 
-            <div className='container'>
-
-              <ConceptMap className="output" graphData={this.state.tree} colors={this.state.colors}
-              jumpToVideoTime={this.jumpToVideoTime}
-              getTimeStamp={this.getTimeStamp}
-              videoTime={this.state.videoTime}
-              ref={o=>{this.conceptmap = o}}/>
-            </div>
+            <Workflow courseId={this.state.courseId} stage={this.state.stage} style={{width:'100%', height:'100%'}}>
+                <Stage1
+                  style={{padding:'30px'}}
+                  courseId={this.state.courseId}
+                  getTimeStamp={this.getTimeStamp}
+                  jumpToVideoTime={this.jumpToVideoTime}/>
+                <Stage2 style={{width:'100%', height:'100%'}}>
+                  <ConceptMap 
+                    courseId={this.state.courseId}
+                    className='flex' graphData={this.state.tree} colors={this.state.colors}
+                    jumpToVideoTime={this.jumpToVideoTime}
+                    getTimeStamp={this.getTimeStamp}
+                    videoTime={this.state.videoTime}
+                    mode={{addNode:'add-node', editNode:'edit-node', editEdge:'edit-edge'}}
+                    ref={o=>{this.conceptmap = o}}/>
+                </Stage2>
+                <Stage3 style={{width:'100%', height:'100%'}}>
+                  <ConceptMap 
+                    courseId={this.state.courseId}
+                    className='flex' graphData={this.state.tree} colors={this.state.colors}
+                    jumpToVideoTime={this.jumpToVideoTime}
+                    getTimeStamp={this.getTimeStamp}
+                    videoTime={this.state.videoTime}
+                    mode={{addNode:'none', editNode:'none', editEdge:'edit-edge'}}
+                    ref={o=>{this.conceptmap = o}}/>
+                </Stage3>
+            </Workflow>
        
           </SplitPane>
         </div>

@@ -1,11 +1,10 @@
-.container{
-  width:100%;
-  height:100%;
+@import '~antd/dist/antd.css';
+.flex{
+  display: flex;
 }
-.input-text, .output, .colorbar{
-  box-sizing: border-box;
-  height: 100%;
-  display: inline-block;
+.flex-column{
+  display: flex;
+  flex-direction: column;
 }
 .output{
   width: inherit;

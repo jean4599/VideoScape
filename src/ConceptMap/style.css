@@ -22,9 +22,14 @@
 	margin: 4px;
 }
 .chip-wrapper{
+	overflow-x: scroll;
+	width: 100%;
 	display: flex;
 	position: absolute;
 	top: 82%;
 	height: 35px;
 	padding-left: 10px;
+}
+canvas{
+	background-color: white;
 }
