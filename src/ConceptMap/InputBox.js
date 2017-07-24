@@ -70,6 +70,8 @@ export default class InputBox extends Component{
   				if(!label) label='';
   				this.textfield.getInputNode().value = label;
   				break;
+  			default:
+  				break;
   		}
   		this.focusTextField();
   	}
@@ -136,7 +138,7 @@ export default class InputBox extends Component{
 	}
 	render(){
 		var textfield = null;
-		if(this.props.mode!='none'){
+		if(this.props.mode!=='none'){
 			textfield = <TextField
 					id='input'
 					style={{

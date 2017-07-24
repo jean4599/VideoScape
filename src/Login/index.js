@@ -3,7 +3,6 @@ import {TextField, Card, CardText, CardTitle, RaisedButton, FlatButton} from 'ma
 import {Link} from 'react-router-dom'
 import './style.css'
 import firebase from 'firebase';
-import {setCookie} from '../utils'
 
 export default class Login extends Component{
 	constructor(){
@@ -11,18 +10,6 @@ export default class Login extends Component{
 		this.login = this.login.bind(this)
 		this.handlePasswordChange = this.handlePasswordChange.bind(this)
 		this.handleEmailChange = this.handleEmailChange.bind(this)
-	}
-	componentDidMount(){
-		var that = this;
-		firebase.auth().onAuthStateChanged(function(user) {
-		  if (user) {
-		    // User is signed in.
-		    console.log(user)
-		    setCookie('uid',user.uid, 7)
-		    setCookie('email', user.email, 7)
-		    window.location.href='/course/virtualreality'
-		  }
-		});
 	}
 	state={
 		email:'',

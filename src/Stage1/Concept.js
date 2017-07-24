@@ -1,6 +1,5 @@
 import React,{Component} from 'react'
 import {Icon, Input} from 'antd'
-import firebase from 'firebase'
 import Duration from './Duration'
 
 export default class Concept extends Component{
@@ -27,13 +26,13 @@ export default class Concept extends Component{
 	render(){
 		return (
 				<div >
-					<p style={{margin:'0px 10px', float:'left',cursor: 'pointer', display:(this.state.mode=='view')?'inline':'none'}}
+					<p style={{margin:'0px 10px', float:'left',cursor: 'pointer', display:(this.state.mode==='view')?'inline':'none'}}
 						onClick={()=>this.props.jumpToTime(this.props.time)}>
 						{this.props.concept}
 					</p>
 					<Duration seconds={this.props.time}/>
 					<Input 
-						style={{display:(this.state.mode=='edit')?'inline':'none'}}
+						style={{display:(this.state.mode==='edit')?'inline':'none'}}
 						value={this.state.concept}
 						onChange={(e)=>this.onChangeConcept(e)}	
 						onPressEnter={()=>this.finishEditConcept()}/>

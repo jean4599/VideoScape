@@ -13,28 +13,25 @@ import firebase from 'firebase'
 
 export default firebase
 
-export const REF = {
-  Node: '/Data/nodes',
-  Link: '/Data/edges',
-  Video: '/video',
-}
-
-export const saveNode = (node)=>{
-  if(node.level===undefined)node.level=null;
-  if(node.time===undefined)node.time=null;
-  firebase.database().ref(REF.Node).push({
-    id: node.id,
-    label: node.label,
-    level: node.level,
-    time: node.time,
+export const REF = (course, uid)=>{
+  return ({
+    VIDEO: '/'+course+'/_video',
+    STAGE: '/'+course+'/stage',
+    STAGE1:{
+      REAL_TIME_DATA: course+'/STAGE1/_concepts/'+uid,
+      USER_SAVED_DATA: course+'/STAGE1/_user_saved_concepts/'+uid,
+      SERVER_PROCESSED_DATA: course+'/STAGE1/_server_result',
+    },
+    STAGE2:{
+      REAL_TIME_DATA: course+'/STAGE2/_graph/'+uid,
+      USER_SAVED_DATA: course+'/STAGE2/_user_saved_graphs/'+uid,
+      SERVER_PROCESSED_DATA: course+'/STAGE2/_server_result/',
+    },
+    STAGE3:{
+      REAL_TIME_DATA: course+'/STAGE3/_graph/'+uid,
+      USER_SAVED_DATA:course+'/STAGE3/_user_saved_graphs/'+uid,
+      SERVER_PROCESSED_DATA: course+'/STAGE3/_server_result',
+    },
   })
-}
-
-export const saveLink = (link)=>{
-  console.log('Firebase save link:')
-  console.log(link)
-  firebase.database().ref(REF.Link).push({
-    from: link.from,
-    to: link.to,
-  })
+  
 }

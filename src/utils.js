@@ -48,7 +48,7 @@ export function compare(a,b) {
 export function arraysEqual(a, b) {
   if (a === b) return true;
   if (a == null || b == null) return false;
-  if (a.length != b.length) return false;
+  if (a.length !== b.length) return false;
 
   // If you don't care about the order of the elements inside
   // the array, you should sort both arrays here.
@@ -57,4 +57,11 @@ export function arraysEqual(a, b) {
     if (a[i] !== b[i]) return false;
   }
   return true;
+}
+export function httpGet(theUrl)
+{
+    var xmlHttp = new XMLHttpRequest();
+    xmlHttp.open( "GET", theUrl, false ); // false for synchronous request
+    xmlHttp.send( null );
+    return xmlHttp.responseText;
 }

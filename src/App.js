@@ -4,6 +4,7 @@ import Drawer from 'material-ui/Drawer';
 import Snackbar from 'material-ui/Snackbar';
 import FlatButton from 'material-ui/FlatButton';
 import HelpIcon from 'material-ui/svg-icons/action/help-outline';
+import RaisedButton from 'material-ui/RaisedButton'
 import './SplitPanel.css';
 import Workflow from './Workflow'
 import Stage1 from './Stage1';
@@ -11,13 +12,10 @@ import Stage2 from './Stage2';
 import Stage3 from './Stage3';
 import ConceptMap from './ConceptMap';
 import Help from './Help'
-import ColorCode from './ColorCode';
 import ProgressStepper from './ProgressStepper.js'
 import VideoPlayer from './Video/VideoPlayer'
 import {REF} from './Firebase';
 import firebase from 'firebase'  
-import {toArray} from './utils'
-import RaisedButton from 'material-ui/RaisedButton';
 import injectTapEventPlugin from 'react-tap-event-plugin';
 import './App.css';
 
@@ -34,10 +32,10 @@ class App extends Component {
     this.handleDrag = this.handleDrag.bind(this);
     this.jumpToVideoTime = this.jumpToVideoTime.bind(this);
 
-    this.saveConceptMap = this.saveConceptMap.bind(this);
+    this.saveResult = this.saveResult.bind(this);
   }
   state = {
-    tree: {
+    graphData: {
       nodes: [],
       edges: [],
     },
@@ -51,38 +49,51 @@ class App extends Component {
   }
   componentWillMount() {
     //Step1: get course ID
-    const courseId = this.props.match.params.course;
+    var courseId = this.props.match.params.course;
+    var stage;
     this.setState({courseId: courseId})
+    console.log('courseId: ', courseId);
+    console.log('uid: ', this.props.uid)
     
     //Step2: get workflow stage
-    firebase.database().ref(courseId+'/stage/').once('value').then((snapshot)=>{
-        console.log('course: '+this.props.courseId+' stage: '+snapshot.val())
-        this.setState({stage: snapshot.val()})
+    firebase.database().ref(REF(courseId, this.props.uid).STAGE).once('value').then((snapshot)=>{
+        console.log('stage: '+snapshot.val())
+        stage = snapshot.val()
+        this.setState({stage: stage})
+
+        //Step4: get initial data from firebase
+        console.log(typeof(stage))
+        switch (stage){
+          case 1:
+            break;
+          case 2:
+            console.log('in stage 2')
+            var nodes = []
+            firebase.database().ref(REF(courseId, this.props.uid).STAGE1.SERVER_PROCESSED_DATA).orderByChild("time").once('value').then((snapshot)=>{  
+              snapshot.forEach(function(childSnapshot){
+                nodes.push(childSnapshot.val())
+              })
+              console.log(nodes)
+              this.setState({graphData: {nodes:nodes, edges: []}})
+            })
+            break;
+          case 3:
+            console.log('in stage 3')
+            firebase.database().ref(REF(courseId, this.props.uid).STAGE2.SERVER_PROCESSED_DATA).once('value').then((snapshot)=>{
+              console.log(snapshot.val())
+              this.setState({graphData: snapshot.val()})
+              
+            })
+            break;
+
+          default:
+            break;
+        }
     })
     //Step3: get video url
-    firebase.database().ref(courseId+'/video').once('value').then((snapshot)=>{
+    firebase.database().ref(REF(courseId, this.props.uid).VIDEO).once('value').then((snapshot)=>{
       console.log('video: ',snapshot.val())
       this.setState({videoURL: snapshot.val()})
-    })
-
-    //get initial nodes and links from firebase
-    firebase.database().ref(REF.Node).orderByChild("time").once('value').then((snapshot)=>{
-      var nodes = []
-      snapshot.forEach(function(childSnapshot){
-        //console.log(childSnapshot.val())
-        //var result = childSnapshot.val()
-        nodes.push(childSnapshot.val())
-      })
-      firebase.database().ref(REF.Link).once('value').then((snapshot)=>{
-        const edges = toArray(snapshot.val());
-        this.setState({
-          tree: {
-            nodes: nodes,
-            edges: edges
-          }
-        })
-      })
-      
     })
 
   //   //save the concept map before closeing the window
@@ -92,27 +103,56 @@ class App extends Component {
   //       firebase.database().ref().push(conceptMapData)
   //   });
   }
-  saveConceptMap(){
-    const conceptMapData = this.conceptmap.getNetworkData();
-    //check all the labels
-    var links = conceptMapData.edges;
-    var flag = false;
-    for (var link in links){
-      if(!('label' in links[link])){
-        flag = true;
-        break;
+  saveResult(){
+    var data;
+    if(this.state.stage===1){ //Stage 1
+      data = this.conceptExtraction.getResult();
+      console.log(data)
+      if(data.length>0){
+        firebase.database().ref(REF(this.state.courseId,this.props.uid).STAGE1.USER_SAVED_DATA).set(data,(error)=>{
+          if(error){
+
+          }else{
+            this.setState({snakbarOpen:true})
+          }
+        })
+      }else{
+        alert('no concepts can be saved');
       }
     }
-    if(this.name.value==='')alert('We need your name to save the data')
-    else if(flag)alert('Each link should has a link phrase');
-    else{
-       firebase.database().ref('result/'+this.name.value).set(conceptMapData, (error)=>{
-        if(error){
-        //do something if save failed
-        }else{
-          this.setState({snakbarOpen:true})
+    else if(this.state.stage===2){ //Stage 2
+      data = this.conceptmap1.getNetworkData();
+      if(data.edges && data.nodes){
+        firebase.database().ref(REF(this.state.courseId,this.props.uid).STAGE2.USER_SAVED_DATA).set(data, (error)=>{
+          if(error){
+
+          }else{
+            this.setState({snakbarOpen:true})
+          }
+        })
+      }
+    }
+    else if(this.state.stage===3){ //Stage 3
+      data = this.conceptmap2.getNetworkData();
+        //check all the labels
+      var links = data.edges;
+      var flag = false;
+      for (var link in links){
+        if(!('label' in links[link])){
+          flag = true;
+          break;
         }
-      })
+      }
+      if(flag)alert('Each link should has a link phrase');
+      else{
+         firebase.database().ref(REF(this.state.courseId,this.props.uid).STAGE3.USER_SAVED_DATA).set(data, (error)=>{
+          if(error){
+          //do something if save failed
+          }else{
+            this.setState({snakbarOpen:true})
+          }
+        })
+      }
     }
   }
   getTimeStamp(){
@@ -157,11 +197,10 @@ class App extends Component {
       <div className='flex-column' style={{height:'100%', padding:'20px'}}>
         <div className='flex' style={{flexBasis:'100px'}}>
           <div className='save-map'>
-            <input placeholder='Your Name' ref={n=>{this.name = n}}></input>
-            <RaisedButton label="Save my concept map" onClick={()=>this.saveConceptMap()}/>
+            <RaisedButton label="Save my result" onClick={()=>this.saveResult()}/>
             <Snackbar
               open={this.state.snakbarOpen}
-              message="Your concept map is saved! Good job :)"
+              message="Your result is saved! Good job :)"
               autoHideDuration={4000}
               onRequestClose={this.handleSnackbarClose}
             />
@@ -184,29 +223,38 @@ class App extends Component {
 
             <Workflow courseId={this.state.courseId} stage={this.state.stage} style={{width:'100%', height:'100%'}}>
                 <Stage1
-                  style={{padding:'30px'}}
                   courseId={this.state.courseId}
+                  uid={this.props.uid}
                   getTimeStamp={this.getTimeStamp}
-                  jumpToVideoTime={this.jumpToVideoTime}/>
+                  jumpToVideoTime={this.jumpToVideoTime}
+                  ref={o=>{this.conceptExtraction = o}}/>
                 <Stage2 style={{width:'100%', height:'100%'}}>
                   <ConceptMap 
                     courseId={this.state.courseId}
-                    className='flex' graphData={this.state.tree} colors={this.state.colors}
+                    uid={this.props.uid}
+                    className='flex' 
+                    graphData={this.state.graphData} 
+                    colors={this.state.colors}
                     jumpToVideoTime={this.jumpToVideoTime}
                     getTimeStamp={this.getTimeStamp}
                     videoTime={this.state.videoTime}
+                    stage={this.state.stage}
                     mode={{addNode:'add-node', editNode:'edit-node', editEdge:'edit-edge'}}
-                    ref={o=>{this.conceptmap = o}}/>
+                    ref={o=>{this.conceptmap1 = o}}/>
                 </Stage2>
                 <Stage3 style={{width:'100%', height:'100%'}}>
                   <ConceptMap 
                     courseId={this.state.courseId}
-                    className='flex' graphData={this.state.tree} colors={this.state.colors}
+                    uid={this.props.uid}
+                    className='flex' 
+                    graphData={this.state.graphData} 
+                    colors={this.state.colors}
                     jumpToVideoTime={this.jumpToVideoTime}
                     getTimeStamp={this.getTimeStamp}
                     videoTime={this.state.videoTime}
+                    stage={this.state.stage}
                     mode={{addNode:'none', editNode:'none', editEdge:'edit-edge'}}
-                    ref={o=>{this.conceptmap = o}}/>
+                    ref={o=>{this.conceptmap2 = o}}/>
                 </Stage3>
             </Workflow>
        

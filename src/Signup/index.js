@@ -3,7 +3,6 @@ import {TextField, Card, CardText, CardTitle, RaisedButton, FlatButton} from 'ma
 import {Link} from 'react-router-dom'
 import './style.css'
 import firebase from 'firebase';
-import {setCookie} from '../utils'
 
 export default class SignUp extends Component{
 	constructor(){
@@ -17,18 +16,6 @@ export default class SignUp extends Component{
 		password:'',
 		email_error:'',
 		password_error:'',
-	}
-	componentDidMount(){
-		var that = this;
-		firebase.auth().onAuthStateChanged(function(user) {
-		  if (user) {
-		    // User is signed in.
-		    console.log(user)
-		    setCookie('uid',user.uid,7)
-		    setCookie('email', user.email, 7)
-		    window.location.href='/course/virtualreality'
-		  }
-		});
 	}
 	handleEmailChange(event){
 		this.setState({
@@ -48,12 +35,12 @@ export default class SignUp extends Component{
 		    .catch(function(error) {
 		  // Handle Errors here.
 		  var errorCode = error.code;
-		  var errorMessage = error.message;
-		  if(errorCode == 'auth/email-already-in-use'){
+		  // var errorMessage = error.message;
+		  if(errorCode === 'auth/email-already-in-use'){
 		    that.setState({email_error:'Email has already been registered'})
-		  } else if(errorCode == 'auth/invalid-email'){
+		  } else if(errorCode === 'auth/invalid-email'){
 		  	that.setState({email_error:'Email format is wrong'})
-		  } else if (errorCode == 'auth/weak-password') {
+		  } else if (errorCode === 'auth/weak-password') {
 		    that.setState({password_error:'Password length should longer than 6 characters/numbers'})
 		  } 
 		  console.log(error);

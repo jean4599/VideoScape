@@ -297,6 +297,7 @@ export default class Network extends Component {
 			}else node.color = '#939393';
 			return node;
 		})
+
 		if(result) return result
 		else return [];
 	}

@@ -1,8 +1,8 @@
 import React, {Component} from 'react'
 import * as firebase from 'firebase'
+import {REF} from '../Firebase'
 import { Input, Timeline, Col, Row, Button } from 'antd'
-import {getGradColor, toArray, getCookie} from '../utils'
-import Duration from './Duration'
+import {toArray} from '../utils'
 import Concept from './Concept'
 
 export default class ConceptExtraction extends Component{
@@ -12,7 +12,6 @@ export default class ConceptExtraction extends Component{
 		this.addConcept = this.addConcept.bind(this);
 		this.deleteConcept = this.deleteConcept.bind(this);
 		this.editConcept = this.editConcept.bind(this);
-		this.handleConceptAggreagate = this.handleConceptAggreagate.bind(this);
 		this.handleConceptInputVlueChange = this.handleConceptInputVlueChange.bind(this);
 	}
 	state={
@@ -20,10 +19,10 @@ export default class ConceptExtraction extends Component{
 			courseId: this.props.courseId,
 			conceptInputValue:'',
 			getTimeStamp: this.props.getTimeStamp,
-			user: getCookie('uid')
+			uid: this.props.uid,
 	}
 	componentDidMount(){
-		this.fire = firebase.database().ref(this.state.courseId+"/_concepts/"+this.state.user);
+		this.fire = firebase.database().ref(REF(this.state.courseId, this.state.uid).STAGE1.REAL_TIME_DATA);
 		this.fire.on('value', this.updateConcepts);
 	}
 	componentDidUpdate(){
@@ -49,33 +48,28 @@ export default class ConceptExtraction extends Component{
 			played: played,
 			time: duration
 		}).key;
-		firebase.database().ref(this.state.courseId+"/_concepts/"+this.state.user+'/'+key).update({id: key})
+		firebase.database().ref(REF(this.state.courseId, this.state.uid).STAGE1.REAL_TIME_DATA + '/'+key).update({id: key})
 		this.setState({conceptInputValue:''})
+		this.conceptsContainer.scrollTop = this.conceptsContainer.scrollHeight;
 	}
 	deleteConcept(id){
-		firebase.database().ref(this.state.courseId+"/_concepts/"+this.state.user+'/'+id).remove();
+		firebase.database().ref(REF(this.state.courseId, this.state.uid).STAGE1.REAL_TIME_DATA+'/'+id).remove();
 	}
 	editConcept(id, content){
-		firebase.database().ref(this.state.courseId+"/_concepts/"+this.state.user+'/'+id).update({word:content});
-	}
-	handleConceptAggreagate(){
-		var me = this.state.user;
-		this.state.concepts.map((concept,index)=>{
-			var randomx = Math.floor(Math.random() * 501) - 250;
-			var randomy = Math.floor(Math.random() * 501) - 250;
-			this.props.addConceptToNetwork(concept['word'], randomx, randomy)
-		})
+		firebase.database().ref(REF(this.state.courseId, this.state.uid).STAGE1.REAL_TIME_DATA+'/'+id).update({word:content});
 	}
 	handleConceptInputVlueChange(e){
 		this.setState({
 			conceptInputValue: e.target.value
 		})
 	}
+	getResult(){
+		return this.state.concepts;
+	}
 	render(){
 		return (
-			<div style={this.props.style}>
-				<div ref={t=>{this.conceptsContainer = t}} 
-					style={{padding:'10px', maxHeight: '80%', overflowY: 'scroll'}}>
+			<div style={{padding:'10px 30px', height:'inherit', display:'flex', flexDirection:'column', overflowY: 'scroll'}}>
+				<div ref={t=>{this.conceptsContainer = t}}>
 					{this.state.concepts.map((concept,index)=>{
 					return  <Timeline.Item key={index}>
 								<Concept 

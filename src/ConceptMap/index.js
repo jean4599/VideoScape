@@ -1,12 +1,10 @@
 import React, {Component} from 'react';
-import ReactDOM from 'react-dom';
 import firebase from 'firebase';
 import Network from './Network';
 import InputBox from './InputBox';
 import RaisedButton from 'material-ui/RaisedButton';
 import {toArray, compare} from '../utils'
 import Chip from 'material-ui/Chip';
-import LinkIcon from 'material-ui/svg-icons/action/trending-flat';
 
 var buttonLabel={}
 if(navigator.appVersion.indexOf("Win")!==-1){buttonLabel['add-edge']='Add link (ctrl+shif)'}
@@ -32,6 +30,11 @@ export default class ConceptMap extends Component {
 		this.updateLinkPhrase = this.updateLinkPhrase.bind(this);
 		this.clickChip = this.clickChip.bind(this);
 	}
+	state={
+		mode: this.props.mode.addNode,
+		showInputBox:'none',
+		linkphrase:{}
+	}
 	componentDidMount(){
 		//shortcut 
 		document.addEventListener('keydown', (e)=>{
@@ -49,10 +52,6 @@ export default class ConceptMap extends Component {
 		        }
 		})
 		firebase.database().ref('Phrases').on('value', this.updateLinkPhrase)
-	}
-	state={
-		mode: this.props.mode.addNode,
-		showInputBox:'none',
 	}
 	prepareAddNode(){
 		this.setState({showInputBox:'block', mode:this.props.mode.addNode,editingEdge:false})
@@ -92,10 +91,11 @@ export default class ConceptMap extends Component {
 		return this.network.getNetworkData();
 	}
 	updateLinkPhrase(snapshot){
-		var linkphrase = snapshot.val();
-		
-		this.setState({linkphrase})
-		console.log(this.state.linkphrase)
+		if(snapshot.val()){
+			var linkphrase = snapshot.val();
+			this.setState({linkphrase})
+		}
+		// console.log(this.state.linkphrase)
 	}
 	clickChip(e){
 		console.log(e)
@@ -104,25 +104,6 @@ export default class ConceptMap extends Component {
 		this.editEdge(edge);
 	}
 	render(){
-		var wrapper=null;
-		var chips = null;
-		if(this.state.mode=='edit-edge'){
-			var data;
-			if(this.state.edgeData.id in this.state.linkphrase){
-	            data = this.state.linkphrase[this.state.edgeData.id]
-	            data = toArray(data)
-	            data.sort(compare)
-	            data = data.map((d)=>{return d})
-	        }else{
-	        	data = this.state.linkphrase['default']
-	        }
-	        console.log(data)
-			chips = data.map((d, i)=>{
-				return(
-					<Chip onTouchTap={()=>this.clickChip(d)} style={{margin:'4px'}} key={i}>{d['label']}</Chip>
-	        	)})
-			wrapper = <div className='chip-wrapper'> Link phrase examples: {chips} </div>
-		}
 		return (
 			<div style={{display:'flex', flexDirection:'column', height:'100%', width:'100%'}}>
 				<div style={{display:'flex', flex:'1 1 94%'}}>
@@ -137,11 +118,10 @@ export default class ConceptMap extends Component {
 	            		videoTime={this.props.videoTime}
 	            		editingEdge={this.state.editingEdge}
 	            		endEditEdgeMode={this.endEditEdgeMode}/>
-	            	<div className='prompt' style={{display:(this.state.editingEdge==true)?'block':'none'}}>
+	            	<div className='prompt' style={{display:(this.state.editingEdge===true)?'block':'none'}}>
 						Click on the starting concept and drag the edge to connect to another concept
 					</div>
 	            </div>
-	            {wrapper}
 	            
             	<div style={{display:'flex', flex:'1 1 6%'}}>
 					<InputBox
