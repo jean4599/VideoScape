@@ -66,13 +66,11 @@ export const defaultProps = {
 			},
 			manipulation:false,
 			interaction:{
+				selectConnectedEdges:false,
 				keyboard:{
 					enabled: true,
 				}
 			},
-			interaction:{
-				selectConnectedEdges:false,
-			}
 	    },
 	    linkphraseNodeOptions:{
 	    	borderWidth:0,

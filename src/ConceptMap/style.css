@@ -14,9 +14,7 @@
 	width:66%;
 	margin-left:5px;
 	height:36px;
-	position: absolute;
-	bottom: 10px;
-	left: 10px;
+	flex:1 0 388px;
 }
 .chip{
 	margin: 4px;

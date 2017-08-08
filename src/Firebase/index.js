@@ -15,22 +15,22 @@ export default firebase
 
 export const REF = (course, uid)=>{
   return ({
-    VIDEO: '/'+course+'/_video',
-    STAGE: '/'+course+'/stage',
+    VIDEO: '/_courses/'+course+'/_video',
+    STAGE: '/_courses/'+course+'/stage',
     STAGE1:{
-      REAL_TIME_DATA: course+'/STAGE1/_concepts/'+uid,
-      USER_SAVED_DATA: course+'/STAGE1/_user_saved_concepts/'+uid,
-      SERVER_PROCESSED_DATA: course+'/STAGE1/_server_result',
+      REAL_TIME_DATA: '/_courses/'+course+'/STAGE1/_concepts/'+uid,
+      USER_SAVED_DATA: '/_courses/'+course+'/STAGE1/_user_saved_concepts/'+uid,
+      SERVER_PROCESSED_DATA: '/_courses/'+course+'/STAGE1/_server_result',
     },
     STAGE2:{
-      REAL_TIME_DATA: course+'/STAGE2/_graph/'+uid,
-      USER_SAVED_DATA: course+'/STAGE2/_user_saved_graphs/'+uid,
-      SERVER_PROCESSED_DATA: course+'/STAGE2/_server_result/',
+      REAL_TIME_DATA: '/_courses/'+course+'/STAGE2/_graph/'+uid,
+      USER_SAVED_DATA: '/_courses/'+course+'/STAGE2/_user_saved_graphs/'+uid,
+      SERVER_PROCESSED_DATA: '/_courses/'+course+'/STAGE2/_server_result/',
     },
     STAGE3:{
-      REAL_TIME_DATA: course+'/STAGE3/_graph/'+uid,
-      USER_SAVED_DATA:course+'/STAGE3/_user_saved_graphs/'+uid,
-      SERVER_PROCESSED_DATA: course+'/STAGE3/_server_result',
+      REAL_TIME_DATA: '/_courses/'+course+'/STAGE3/_graph/'+uid,
+      USER_SAVED_DATA: '/_courses/'+course+'/STAGE3/_user_saved_graphs/'+uid,
+      SERVER_PROCESSED_DATA: '/_courses/'+course+'/STAGE3/_server_result',
     },
   })
   

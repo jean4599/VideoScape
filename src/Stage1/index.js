@@ -13,6 +13,7 @@ export default class ConceptExtraction extends Component{
 		this.deleteConcept = this.deleteConcept.bind(this);
 		this.editConcept = this.editConcept.bind(this);
 		this.handleConceptInputVlueChange = this.handleConceptInputVlueChange.bind(this);
+		this.getCurrentTime = this.getCurrentTime.bind(this);
 	}
 	state={
 			concepts:[],
@@ -26,7 +27,7 @@ export default class ConceptExtraction extends Component{
 		this.fire.on('value', this.updateConcepts);
 	}
 	componentDidUpdate(){
-		this.conceptsContainer.scrollTop = this.conceptsContainer.scrollHeight;
+		this.container.scrollTop = this.container.scrollHeight;
 	}
 	updateConcepts(snapshot){
 		var conceptsArray = toArray(snapshot.val());
@@ -35,41 +36,43 @@ export default class ConceptExtraction extends Component{
 		})
 	}
 	addConcept(){
-		const time = this.state.getTimeStamp();
 		const minus_time = 3;
-		var played = time.played;
-		var duration = time.duration;
-		if(time.duration>minus_time){
-			played = time.played/time.duration * (time.duration-minus_time);
-			duration = time.duration-minus_time;
+		var time = this.getCurrentTime();
+		if(time>minus_time){
+			time -= minus_time;
 		}
 		var key = this.fire.push({
 			word: this.state.conceptInputValue,
-			played: played,
-			time: duration
+			time: time
 		}).key;
 		firebase.database().ref(REF(this.state.courseId, this.state.uid).STAGE1.REAL_TIME_DATA + '/'+key).update({id: key})
 		this.setState({conceptInputValue:''})
-		this.conceptsContainer.scrollTop = this.conceptsContainer.scrollHeight;
+		this.container.scrollTop = this.container.scrollHeight;
 	}
 	deleteConcept(id){
 		firebase.database().ref(REF(this.state.courseId, this.state.uid).STAGE1.REAL_TIME_DATA+'/'+id).remove();
 	}
-	editConcept(id, content){
-		firebase.database().ref(REF(this.state.courseId, this.state.uid).STAGE1.REAL_TIME_DATA+'/'+id).update({word:content});
+	editConcept(id, label, time){
+		firebase.database().ref(REF(this.state.courseId, this.state.uid).STAGE1.REAL_TIME_DATA+'/'+id).update({word:label, time:time});
 	}
 	handleConceptInputVlueChange(e){
 		this.setState({
 			conceptInputValue: e.target.value
 		})
 	}
+	getCurrentTime(){
+		const time = this.state.getTimeStamp();
+		// var played = time.played;
+		var duration = time.duration;
+		return duration
+	}
 	getResult(){
 		return this.state.concepts;
 	}
 	render(){
 		return (
-			<div style={{padding:'10px 30px', height:'inherit', display:'flex', flexDirection:'column', overflowY: 'scroll'}}>
-				<div ref={t=>{this.conceptsContainer = t}}>
+			<div ref={t=>{this.container = t}} style={{padding:'10px 30px', height:'inherit', display:'flex', flexDirection:'column', overflowY: 'scroll'}}>
+				<div>
 					{this.state.concepts.map((concept,index)=>{
 					return  <Timeline.Item key={index}>
 								<Concept 
@@ -79,7 +82,8 @@ export default class ConceptExtraction extends Component{
 									played={concept.played}
 									jumpToTime={this.props.jumpToVideoTime}
 									deleteConcept={this.deleteConcept}
-									editConcept={this.editConcept}/>
+									editConcept={this.editConcept}
+									getCurrentTime={this.getCurrentTime}/>
 							</Timeline.Item>
 					})}
 				</div>

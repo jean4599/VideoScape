@@ -13,7 +13,6 @@ class HorizontalLinearStepper extends React.Component {
   }
   state = {
     finished: false,
-    stepIndex: this.props.stage,
   };
   onMouseOver(n){
     switch (n){
@@ -26,7 +25,7 @@ class HorizontalLinearStepper extends React.Component {
     }
   }
   render() {
-    const {finished, stepIndex} = this.state;
+    const {finished} = this.state;
     const contentStyle = {margin: '0 16px'};
 
     return (

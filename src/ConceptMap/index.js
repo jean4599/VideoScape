@@ -3,8 +3,7 @@ import firebase from 'firebase';
 import Network from './Network';
 import InputBox from './InputBox';
 import RaisedButton from 'material-ui/RaisedButton';
-import {toArray, compare} from '../utils'
-import Chip from 'material-ui/Chip';
+import ColorCode from './ColorCode';
 
 var buttonLabel={}
 if(navigator.appVersion.indexOf("Win")!==-1){buttonLabel['add-edge']='Add link (ctrl+shif)'}
@@ -106,6 +105,7 @@ export default class ConceptMap extends Component {
 	render(){
 		return (
 			<div style={{display:'flex', flexDirection:'column', height:'100%', width:'100%'}}>
+				<ColorCode />
 				<div style={{display:'flex', flex:'1 1 94%'}}>
 			        <Network style={{display:'flex', height:'100%', width:'100%'}}
 						ref={network=>{this.network = network}}
@@ -123,7 +123,7 @@ export default class ConceptMap extends Component {
 					</div>
 	            </div>
 	            
-            	<div style={{display:'flex', flex:'1 1 6%'}}>
+            	<div style={{display:'flex', flex:'1 0 40px'}}>
 					<InputBox
 						className='inputbox'
 						mode={this.state.mode}
@@ -138,9 +138,6 @@ export default class ConceptMap extends Component {
 						ref={input=>{this.inputBox = input}}/>
 					<RaisedButton style={{
 									width:'30%',
-									position: 'absolute',
-									bottom: '10px',
-									right: '10px',
 									display: 'block',
 									}}
 						labelStyle={{textTransform:'none'}}

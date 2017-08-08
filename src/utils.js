@@ -58,10 +58,11 @@ export function arraysEqual(a, b) {
   }
   return true;
 }
-export function httpGet(theUrl)
+export function httpGet(theUrl, onloaded)
 {
     var xmlHttp = new XMLHttpRequest();
-    xmlHttp.open( "GET", theUrl, false ); // false for synchronous request
+    xmlHttp.addEventListener("load", onloaded, false);
+    xmlHttp.open( "GET", theUrl, true ); // false for synchronous request
     xmlHttp.send( null );
     return xmlHttp.responseText;
 }

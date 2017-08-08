@@ -17,11 +17,14 @@ import VideoPlayer from './Video/VideoPlayer'
 import {REF} from './Firebase';
 import firebase from 'firebase'  
 import injectTapEventPlugin from 'react-tap-event-plugin';
-import './App.css';
+import './Course.css';
+import {httpGet} from './utils';
+import {Spin} from 'antd';
+import FeedbackResult from './FeedbackResult'
 
 injectTapEventPlugin();
 
-class App extends Component {
+class Course extends Component {
   constructor(props) {
     super(props);
     this.getTimeStamp = this.getTimeStamp.bind(this);
@@ -33,6 +36,8 @@ class App extends Component {
     this.jumpToVideoTime = this.jumpToVideoTime.bind(this);
 
     this.saveResult = this.saveResult.bind(this);
+    this.onSubmitProgress = this.onSubmitProgress.bind(this);
+    this.onSubmitSuccess = this.onSubmitSuccess.bind(this);
   }
   state = {
     graphData: {
@@ -46,6 +51,8 @@ class App extends Component {
     dragging: false,
     snakbarOpen:false,
     helpOpen:true,
+    submitting:false,
+    showResult:false,
   }
   componentWillMount() {
     //Step1: get course ID
@@ -108,26 +115,34 @@ class App extends Component {
     if(this.state.stage===1){ //Stage 1
       data = this.conceptExtraction.getResult();
       console.log(data)
-      if(data.length>0){
+      if(data.length>4){
         firebase.database().ref(REF(this.state.courseId,this.props.uid).STAGE1.USER_SAVED_DATA).set(data,(error)=>{
           if(error){
 
           }else{
-            this.setState({snakbarOpen:true})
+            this.onSubmitProgress()
+            httpGet('http://140.114.79.99:5000/videoscape/api/'+this.state.courseId+'/process/stage1',this.onSubmitSuccess)
           }
         })
       }else{
-        alert('no concepts can be saved');
+        alert('at least 5 concepts are needed');
       }
     }
     else if(this.state.stage===2){ //Stage 2
       data = this.conceptmap1.getNetworkData();
-      if(data.edges && data.nodes){
+      if(data.edges.length<data.nodes.length/2){
+        alert('Every concept should has at least one link conneted to other concepts');
+      }
+      else if(data.nodes.length<5){
+        alert('At least 5 concepts are required')
+      }
+      else{
         firebase.database().ref(REF(this.state.courseId,this.props.uid).STAGE2.USER_SAVED_DATA).set(data, (error)=>{
           if(error){
 
           }else{
-            this.setState({snakbarOpen:true})
+            this.onSubmitProgress()
+            httpGet('http://140.114.79.99:5000/videoscape/api/'+this.state.courseId+'/process/stage2',this.onSubmitSuccess)
           }
         })
       }
@@ -149,11 +164,36 @@ class App extends Component {
           if(error){
           //do something if save failed
           }else{
+            this.props.handleStageFinish(this.state.courseId);
             this.setState({snakbarOpen:true})
           }
         })
       }
     }
+  }
+  onSubmitProgress(){
+    console.log('submit progress')
+    this.setState({submitting:true})
+  }
+  onSubmitSuccess(){
+    console.log('submit success')
+    this.props.handleStageFinish(this.state.courseId);
+    this.setState({
+          submitting:false,
+          snakbarOpen:true,
+        })
+    // var serverData;
+    // if(stage===1){
+    //   firebase.database().ref(REF(this.state.courseId,this.props.uid).STAGE1.SERVER_PROCESSED_DATA).once('value').then((snapshot)=>{
+    //     this.setState({
+    //       submitting:false,
+    //       snakbarOpen:true,
+    //       showResult:true,
+    //       userData:userData,
+    //       serverData:snapshot.val(),
+    //     })
+    //   })
+    // }
   }
   getTimeStamp(){
     return this.refs.player.getPlayedTime();
@@ -197,7 +237,10 @@ class App extends Component {
       <div className='flex-column' style={{height:'100%', padding:'20px'}}>
         <div className='flex' style={{flexBasis:'100px'}}>
           <div className='save-map'>
-            <RaisedButton label="Save my result" onClick={()=>this.saveResult()}/>
+            <Spin spinning={this.state.submitting} delay={500} >
+              <RaisedButton label="Submit my result" onClick={()=>this.saveResult()}/>
+            </Spin>
+            
             <Snackbar
               open={this.state.snakbarOpen}
               message="Your result is saved! Good job :)"
@@ -268,11 +311,11 @@ class App extends Component {
                 openSecondary={true}
                 onRequestChange={(helpOpen) => this.setState({helpOpen})}
               >
-              <Help />
+              <Help stage={this.state.stage} />
           </Drawer>
       </div>
     );
   }
 }
-export default App;
+export default Course;
 
