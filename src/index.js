@@ -9,6 +9,7 @@ import IndexPage from './IndexPage';
 import CourseList from './CourseList';
 import firebase from 'firebase';
 import {Icon} from 'antd';
+import ScrollableAnchor from 'react-scrollable-anchor';
 import {Route, BrowserRouter, Redirect, Switch, Link} from 'react-router-dom';
 import './index.css';
 
@@ -64,8 +65,10 @@ export default class App extends Component{
 							<Route path="/course/:course" render={(props) => <Course handleStageFinish={this.handleStageFinish} uid={this.state.uid} {...props}/>} />
 					    	<Route path="/" render={(props)=>
 					    		<IndexPage {...props}>
-					    			<Link to="#courses" id='nav-link'> <p><Icon type="double-right" /> Available courses</p> </Link>
-					    			<CourseList userState={this.state.userState} id='courses' className='section'/>
+					    			<a href="#courses" id='nav-link'> <p><Icon type="double-right" /> Available courses</p> </a>
+					    			<ScrollableAnchor id={'courses'}>
+					    				<CourseList userState={this.state.userState} id='courses' className='section'/>
+					    			</ScrollableAnchor>
 					    		</IndexPage>
 					    	} />
 				    	</Switch>
