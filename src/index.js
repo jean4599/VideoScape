@@ -8,8 +8,7 @@ import Signup from './Signup'
 import IndexPage from './IndexPage';
 import CourseList from './CourseList';
 import firebase from 'firebase';
-import {Anchor, Icon} from 'antd';
-const AnchorLink = Anchor.Link;
+import {Icon} from 'antd';
 import {Route, BrowserRouter, Redirect, Switch, Link} from 'react-router-dom';
 import './index.css';
 
@@ -65,7 +64,7 @@ export default class App extends Component{
 							<Route path="/course/:course" render={(props) => <Course handleStageFinish={this.handleStageFinish} uid={this.state.uid} {...props}/>} />
 					    	<Route path="/" render={(props)=>
 					    		<IndexPage {...props}>
-					    			<AnchorLink href="#courses" title={<p><Icon type="double-right" /> Available courses</p>} id='nav-link'/>
+					    			<Link to="#courses" id='nav-link'> <p><Icon type="double-right" /> Available courses</p> </Link>
 					    			<CourseList userState={this.state.userState} id='courses' className='section'/>
 					    		</IndexPage>
 					    	} />
