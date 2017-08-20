@@ -91,6 +91,10 @@ export default class ConceptExtraction extends Component{
 					<Col span={20}><Input placeholder="New concept: word or phrases, ex: water, learning science" onPressEnter={()=>this.addConcept()} value={this.state.conceptInputValue} onChange={this.handleConceptInputVlueChange}/></Col>
 					<Col span={4}><Button type="primary" onClick={()=>this.addConcept()}>Add</Button></Col>
 				</Row>
+				<p> 
+					A better concept for concept map should be <b>sort</b> and <b>condensed</b>.
+						Instead of writing a concept like: human-computer interaction is  intersection of computer science, behavioral sciences, design, media studies
+						, seperate them into 5 concepts: human-computer interaction / behavioral science / ...</p>
 			</div>
 			)
 	}
