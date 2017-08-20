@@ -9,6 +9,7 @@ import IndexPage from './IndexPage';
 import CourseList from './CourseList';
 import firebase from 'firebase';
 import {Icon} from 'antd';
+import FeedbackResult from './FeedbackResult'
 import ScrollableAnchor from 'react-scrollable-anchor';
 import {Route, BrowserRouter, Redirect, Switch, Link} from 'react-router-dom';
 import './index.css';
@@ -51,8 +52,9 @@ export default class App extends Component{
 		  }
 		});
 	}
-	handleStageFinish(courseId){
+	handleStageFinish(courseId, stage){
 		firebase.database().ref('/_user/'+this.state.uid+'/'+courseId+'/course').set('true')
+		this.setState({course: courseId, stage: stage})
 	}
 	render(){
 		return(
@@ -62,6 +64,7 @@ export default class App extends Component{
 						?<Switch>
 							<Redirect from="/login" to="/" />
 							<Redirect from="/signup" to="/"/>
+							<Route path="/checkResult" render={(props)=><FeedbackResult course={this.state.course} stage={this.state.stage} uid={this.state.uid}/>} />
 							<Route path="/course/:course" render={(props) => <Course handleStageFinish={this.handleStageFinish} uid={this.state.uid} {...props}/>} />
 					    	<Route path="/" render={(props)=>
 					    		<IndexPage {...props}>

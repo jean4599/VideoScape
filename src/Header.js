@@ -65,7 +65,7 @@ export default class Header extends Component{
 				        >
 				        {this.props.email
 				        	?<MenuItem value="signOut" primaryText="Sign out" />
-				        	:<MenuItem value="signIn" primaryText="Sign in"/>}
+				        	:<MenuItem value="signIn" primaryText="Log in"/>}
 				          
 				        </IconMenu>
 					</div>

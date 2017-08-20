@@ -88,7 +88,7 @@ export default class ConceptExtraction extends Component{
 					})}
 				</div>
 				<Row>
-					<Col span={20}><Input placeholder="New concept" onPressEnter={()=>this.addConcept()} value={this.state.conceptInputValue} onChange={this.handleConceptInputVlueChange}/></Col>
+					<Col span={20}><Input placeholder="New concept: word or phrases, ex: water, learning science" onPressEnter={()=>this.addConcept()} value={this.state.conceptInputValue} onChange={this.handleConceptInputVlueChange}/></Col>
 					<Col span={4}><Button type="primary" onClick={()=>this.addConcept()}>Add</Button></Col>
 				</Row>
 			</div>

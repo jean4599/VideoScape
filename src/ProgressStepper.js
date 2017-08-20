@@ -32,7 +32,7 @@ class HorizontalLinearStepper extends React.Component {
       <div className={this.props.className}>
         <Stepper activeStep={this.props.stage-1}>
           <Step>
-            <StepLabel onMouseOver={()=>this.onMouseOver(1)}>Find key concepts in the video</StepLabel>
+            <StepLabel onMouseOver={()=>this.onMouseOver(1)}>List out key concepts in the video</StepLabel>
           </Step>
           <Step>
             <StepLabel onMouseOver={()=>this.onMouseOver(2)}>Link the concepts</StepLabel>

@@ -69,7 +69,7 @@ export default class SignUp extends Component{
 					      onChange={this.handlePasswordChange}/><br /><br />
 					    <RaisedButton label="Sign up" fullWidth={true} primary={true} onTouchTap={this.signUp}/>
 					    <center> or </center>
-					    <Link to={'/Login'}><FlatButton label="Login" fullWidth={true}/></Link>
+					    <Link to={'/Login'}><FlatButton label="Log in" fullWidth={true}/></Link>
 				    </CardText>
 			    </Card>
 		    </div>

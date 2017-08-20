@@ -29,7 +29,7 @@ export default class IndexPage extends Component{
 								<img src='./image/workflow-stage1.png' alt='Stage 1'/>
 							</div>
 							<div className='text'>
-								<b>Practice 1: Extract concepts</b><br/>
+								<b>Practice 1: List out key concepts</b><br/>
 								As you watch video, list out key concepts.<br/>
 								Adjust the time mark of each concept to indicate the right time that it appear in the video.<br/>
 							</div>
@@ -50,9 +50,10 @@ export default class IndexPage extends Component{
 								<img src='./image/workflow-stage3.png' alt='Stage 3'/>
 							</div>
 							<div className='text'>
-								<b>Practice 3: Label link phrases on the links</b><br/>
+								<b>Practice 3: Revise links & Label link phrases on the links</b><br/>
 								You will see a connected concept map which is aggregated from the results of Practice 2.
 								As you watch the video, check the concept map and verbalize the relation between concepts by labeling on the links.
+								The aggregated concept map is not perfect, so you may also delete existing links.
 							</div>
 						</div>
 					</div>

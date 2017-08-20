@@ -44,7 +44,7 @@ export default class Login extends Component{
 		return (
 			<div id='container'>
 				<Card>
-					<CardTitle title="Login"/>
+					<CardTitle title="Log in"/>
 					<CardText>
 						<TextField
 					      id="email"
@@ -61,7 +61,7 @@ export default class Login extends Component{
 					      ref='password'
 					      value={this.state.password}
 					      onChange={this.handlePasswordChange}/><br /><br />
-					    <RaisedButton label="Login" fullWidth={true} primary={true} onTouchTap={this.login}/>
+					    <RaisedButton label="Log in" fullWidth={true} primary={true} onTouchTap={this.login}/>
 					    <center> or </center>
 					    <Link to={'/Signup'}><FlatButton label="Sign up" fullWidth={true}/></Link>
 				    </CardText>

@@ -20,7 +20,7 @@ import injectTapEventPlugin from 'react-tap-event-plugin';
 import './Course.css';
 import {httpGet} from './utils';
 import {Spin} from 'antd';
-import FeedbackResult from './FeedbackResult'
+import {withRouter} from "react-router-dom";
 
 injectTapEventPlugin();
 
@@ -177,23 +177,12 @@ class Course extends Component {
   }
   onSubmitSuccess(){
     console.log('submit success')
-    this.props.handleStageFinish(this.state.courseId);
+    this.props.handleStageFinish(this.state.courseId, this.state.stage);
     this.setState({
           submitting:false,
           snakbarOpen:true,
         })
-    // var serverData;
-    // if(stage===1){
-    //   firebase.database().ref(REF(this.state.courseId,this.props.uid).STAGE1.SERVER_PROCESSED_DATA).once('value').then((snapshot)=>{
-    //     this.setState({
-    //       submitting:false,
-    //       snakbarOpen:true,
-    //       showResult:true,
-    //       userData:userData,
-    //       serverData:snapshot.val(),
-    //     })
-    //   })
-    // }
+    this.props.history.push('/checkResult');
   }
   getTimeStamp(){
     return this.refs.player.getPlayedTime();
@@ -317,5 +306,5 @@ class Course extends Component {
     );
   }
 }
-export default Course;
+export default withRouter(Course);
 
