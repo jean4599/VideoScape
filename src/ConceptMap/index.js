@@ -34,6 +34,12 @@ export default class ConceptMap extends Component {
 		showInputBox:'none',
 		linkphrase:{}
 	}
+	static defaltProps={
+		data:{
+			nodes:[],
+			edges:[],
+		}
+	}
 	componentDidMount(){
 		//shortcut 
 		document.addEventListener('keydown', (e)=>{
@@ -103,13 +109,14 @@ export default class ConceptMap extends Component {
 		this.editEdge(edge);
 	}
 	render(){
+		console.log(this.props.graphParameter)
 		return (
 			<div style={{display:'flex', flexDirection:'column', height:'100%', width:'100%'}}>
 				<ColorCode />
 				<div style={{display:'flex', flex:'1 1 94%'}}>
 			        <Network style={{display:'flex', height:'100%', width:'100%'}}
 						ref={network=>{this.network = network}}
-						graphData={this.props.graphData} colors={this.props.color} 
+						data={this.props.data} colors={this.props.color} 
 						prepareAddNode={this.prepareAddNode} 
 						prepareEditNode={this.prepareEditNode}
 						prepareEditEdge={this.prepareEditEdge}
@@ -117,6 +124,7 @@ export default class ConceptMap extends Component {
 	            		getTimeStamp={this.props.getTimeStamp}
 	            		videoTime={this.props.videoTime}
 	            		editingEdge={this.state.editingEdge}
+	            		options={this.props.graphParameter}
 	            		endEditEdgeMode={this.endEditEdgeMode}/>
 	            	<div className='prompt' style={{display:(this.state.editingEdge===true)?'block':'none'}}>
 						Click on the starting concept and drag the edge to connect to another concept

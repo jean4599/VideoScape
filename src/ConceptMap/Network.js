@@ -114,13 +114,13 @@ export default class Network extends Component {
 	}
   	componentDidMount() {
 	   const {
-	      graphData: {
+	      data: {
 	        nodes,
 	        edges,
 	      },
 	      options,
 	    } = this.props;
-
+	    console.log(options)
 	    this.nodes = this.preprocessNode(nodes)
 	    this.nodes = new vis.DataSet(nodes);
 	    this.edges = new vis.DataSet(edges);
@@ -157,6 +157,7 @@ export default class Network extends Component {
 	    });
 	    this.network.on("dragStart",(params)=>{
 	    	this.setState({dragging:true})
+	    	this.network.setOptions({physics:false})
 	    })
 	    
 	    this.network.on("click", (params)=>{
@@ -200,14 +201,14 @@ export default class Network extends Component {
 	}
 	componentWillReceiveProps(nextProps){
 		const {
-	      graphData: {
+	      data: {
 	        edges,
 	        nodes,
 	      },
 	      videoTime,
 	    } = nextProps;
 
-	    if(!arraysEqual(nodes,this.props.graphData.nodes)){
+	    if(!arraysEqual(nodes,this.props.data.nodes)){
 	    	console.log('new props nodes')
 	    	this.x = -this.network.getViewPosition().x + 50
 	    	this.y = -this.network.getViewPosition().y + 10
@@ -226,7 +227,7 @@ export default class Network extends Component {
 	    		nodes: this.nodes,
 	    	})
 	    }
-	    if(!arraysEqual(edges,this.props.graphData.edges)){
+	    if(!arraysEqual(edges,this.props.data.edges)){
 	    	console.log('new props edges')
 	    	this.edges.update(edges.concat(this.edges.get()));
 	    	this.setState({
@@ -237,6 +238,7 @@ export default class Network extends Component {
 	componentWillUpdate(nextProps, nextState) {
 		const{
 			videoTime,
+			options,
 	    } = nextProps;
 	    
 	    this.nodes = this.preprocessNode(nextState.nodes.get(), videoTime);
@@ -253,6 +255,7 @@ export default class Network extends Component {
     	const scale = this.network.getScale();
 
 	    this.network.setData(this.data)
+	    
 	    if(nextProps.editingEdge){
 	    	//console.log('open manipulation')
 	    	this.network.setOptions({

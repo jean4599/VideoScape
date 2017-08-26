@@ -1,21 +1,10 @@
 import PropTypes from 'prop-types';
 export const propTypes = {
-	    graphData: PropTypes.shape({
+	    data: PropTypes.shape({
 	      nodes: PropTypes.array,
 	      edges: PropTypes.array,
-	    }).isRequired,
-	    options: PropTypes.shape({
-	    	layout:PropTypes.shape({
-	    		hierarchical:PropTypes.shape({
-	    			enabled: PropTypes.bool,
-	    			direction: PropTypes.string,
-	    			levelSeparation: PropTypes.number,
-	    			sortMethod: PropTypes.string,
-	    			treeSpacing: PropTypes.number,
-	    			parentCentralization: PropTypes.bool,
-	    		}),
-	    	})
 	    }),
+	    options: PropTypes.object,
 	    colors: PropTypes.arrayOf(PropTypes.string),
 	    jumpToVideoTime: PropTypes.func,
 	    getTimeStamp: PropTypes.func,
@@ -23,6 +12,10 @@ export const propTypes = {
 	    videoTime: PropTypes.number,
   	}
 export const defaultProps = {
+		data:{
+			nodes:[],
+			edges:[]
+		},
 	    options: {
 	    	layout:{
 	    		hierarchical:{
@@ -31,10 +24,30 @@ export const defaultProps = {
 	      			levelSeparation: 50,
 	      			sortMethod:'directed',
 	      			treeSpacing:100,
-	      			parentCentralization: true,
+	      			parentCentralization: false,
 	      		},
 	    	},
-	    	physics: false,
+	    	physics: {
+			    forceAtlas2Based: {
+			      gravitationalConstant: -28,
+			      springLength: 100,
+			      springConstant: 0.56,
+			      avoidOverlap: 0.5,
+			      "damping": 1,
+			    },
+			    maxVelocity: 50,
+			    minVelocity: 0.75,
+			    stabilization:false,
+			    solver: 'forceAtlas2Based',
+			    "timestep": 0.5,
+				stabilization: {
+			      enabled: true,
+			      iterations: 1000,
+			      updateInterval: 50,
+			      onlyDynamicEdges: false,
+			      fit: false
+			    },
+			},
 	    	edges:{
 	    		color:'#333333',
 	    		chosen: false,
@@ -68,7 +81,7 @@ export const defaultProps = {
 			interaction:{
 				selectConnectedEdges:false,
 				keyboard:{
-					enabled: true,
+					enabled: false,
 				}
 			},
 	    },

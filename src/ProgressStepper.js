@@ -29,16 +29,16 @@ class HorizontalLinearStepper extends React.Component {
     const contentStyle = {margin: '0 16px'};
 
     return (
-      <div className={this.props.className}>
-        <Stepper activeStep={this.props.stage-1}>
+      <div style={this.props.style}>
+        <Stepper activeStep={parseInt(this.props.stage)-1}>
           <Step>
             <StepLabel onMouseOver={()=>this.onMouseOver(1)}>List out key concepts in the video</StepLabel>
           </Step>
           <Step>
-            <StepLabel onMouseOver={()=>this.onMouseOver(2)}>Link the concepts</StepLabel>
+            <StepLabel onMouseOver={()=>this.onMouseOver(2)}>Concepts linking</StepLabel>
           </Step>
           <Step>
-            <StepLabel onMouseOver={()=>this.onMouseOver(3)}>Revise links & Add link phrases</StepLabel>
+            <StepLabel onMouseOver={()=>this.onMouseOver(3)}>Add link phrases</StepLabel>
           </Step>
         </Stepper>
       </div>

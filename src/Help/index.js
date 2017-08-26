@@ -28,8 +28,7 @@ const Stage2 = (
 			<p className='text'> Practice 2: link concepts </p>
 			<p> Beside the video, there is a canvas, where you can make a concept map to represent your understanding on the lecture. 
 			A concept map is a graph consisted of nodes(concepts), links(relationship of concepts), and link phrases(label on the links).
-			Previous learners have find out key concepts, which are presented on the canvas. 
-			In this practice, you need to link those key concepts to show their relationship and structure. </p>
+			Previous learners have make contrubution to the concept map, their aggregation result is shown on the canvas </p>
 			
 			<p className='text'> Link concepts and delete links</p>
 			<p>You can drag to move the concepts. When you want to make a link, click on 'Add link' button and drag-and-drop from starting concept to end concept.
@@ -76,9 +75,14 @@ const Help =({stage})=>{
 	var target = null;
 	console.log('Stage: '+stage)
     switch(stage){
-    	case 1: target = Stage1; break;
-		case 2: target =  Stage2; break;
-		case 3: target =  Stage3; break;
+    	case '1_1':
+    	case '1_2':
+    	case '1_3': target = Stage1; break;
+		case '2_1':
+		case '2_2':
+		case '2_3': target =  Stage2; break;
+		case '3_1':
+		case '3_2': target =  Stage3; break;
 		default: break;
     }
     return target

@@ -14,7 +14,7 @@ import ConceptMap from './ConceptMap';
 import Help from './Help'
 import ProgressStepper from './ProgressStepper.js'
 import VideoPlayer from './Video/VideoPlayer'
-import {REF} from './Firebase';
+import {REF, DATAREF} from './Firebase';
 import firebase from 'firebase'  
 import injectTapEventPlugin from 'react-tap-event-plugin';
 import './Course.css';
@@ -40,10 +40,6 @@ class Course extends Component {
     this.onSubmitSuccess = this.onSubmitSuccess.bind(this);
   }
   state = {
-    graphData: {
-      nodes: [],
-      edges: [],
-    },
     colors: ['#FF7637', '#FFAC87', '#FFD3C0', '#FFECE4', '#FFFAF8'],
     error: false,
     timeQueue:[],
@@ -69,40 +65,64 @@ class Course extends Component {
         this.setState({stage: stage})
 
         //Step4: get initial data from firebase
-        console.log(typeof(stage))
         switch (stage){
-          case 1:
+          case '1_1':break;
+          case '1_2':
+          case '1_3':
+            var concepts = [];
+            firebase.database().ref(DATAREF(courseId, this.props.uid, stage).INITIAL_DATA).orderByChild("time").once('value').then((snapshot)=>{  
+              snapshot.forEach(function(childSnapshot){
+                concepts.push(childSnapshot.val())
+              })
+              console.log(concepts)
+              this.setState({data: concepts})
+            })
             break;
-          case 2:
-            console.log('in stage 2')
+          case '2_1':
             var nodes = []
-            firebase.database().ref(REF(courseId, this.props.uid).STAGE1.SERVER_PROCESSED_DATA).orderByChild("time").once('value').then((snapshot)=>{  
+            firebase.database().ref(DATAREF(courseId, this.props.uid, stage).INITIAL_DATA).orderByChild("time").once('value').then((snapshot)=>{  
               snapshot.forEach(function(childSnapshot){
                 nodes.push(childSnapshot.val())
               })
               console.log(nodes)
-              this.setState({graphData: {nodes:nodes, edges: []}})
+              this.setState({
+                data: {nodes:nodes, edges:[]},
+                graphParameter:{
+                  physics:false
+                }
+              })
             })
             break;
-          case 3:
-            console.log('in stage 3')
-            firebase.database().ref(REF(courseId, this.props.uid).STAGE2.SERVER_PROCESSED_DATA).once('value').then((snapshot)=>{
+          case '2_2':
+          case '2_3':
+            firebase.database().ref(DATAREF(courseId, this.props.uid, stage).INITIAL_DATA).once('value').then((snapshot)=>{  
               console.log(snapshot.val())
-              this.setState({graphData: snapshot.val()})
-              
+              this.setState({
+                data: snapshot.val(),
+              })
+            })
+            break;
+          case '3-1':
+          case '3-2':
+            firebase.database().ref(DATAREF(courseId, this.props.uid, stage).INITIAL_DATA).once('value').then((snapshot)=>{
+              console.log(snapshot.val())
+              this.setState({data: snapshot.val()})
             })
             break;
 
           default:
             break;
         }
+        //Step5: get instruction
+        firebase.database().ref(DATAREF(courseId, this.props.uid, stage).INSTRUCTION).once('value').then((snapshot)=>{
+          this.setState({instruction: snapshot.val()})
+        })
     })
     //Step3: get video url
     firebase.database().ref(REF(courseId, this.props.uid).VIDEO).once('value').then((snapshot)=>{
       console.log('video: ',snapshot.val())
       this.setState({videoURL: snapshot.val()})
     })
-
   //   //save the concept map before closeing the window
   //   window.addEventListener("beforeunload", (ev) => 
   //   {  
@@ -112,23 +132,24 @@ class Course extends Component {
   }
   saveResult(){
     var data;
-    if(this.state.stage===1){ //Stage 1
+    var stage = this.state.stage;
+    if(stage==='1_1'||stage==='1_2'||stage==='1_3'){ //Stage 1
       data = this.conceptExtraction.getResult();
       console.log(data)
       if(data.length>4){
-        firebase.database().ref(REF(this.state.courseId,this.props.uid).STAGE1.USER_SAVED_DATA).set(data,(error)=>{
+        firebase.database().ref(DATAREF(this.state.courseId,this.props.uid, stage).USER_SAVED_DATA).set(data,(error)=>{
           if(error){
 
           }else{
             this.onSubmitProgress()
-            httpGet('http://140.114.79.99:5000/videoscape/api/'+this.state.courseId+'/process/stage1',this.onSubmitSuccess)
+            httpGet('http://140.114.79.99:5000/videoscape/api/'+this.state.courseId+'/process/'+stage,this.onSubmitSuccess)
           }
         })
       }else{
         alert('at least 5 concepts are needed');
       }
     }
-    else if(this.state.stage===2){ //Stage 2
+    else if(stage==='2_1'||stage==='2_2'||stage==='2_3'){ //Stage 2
       data = this.conceptmap1.getNetworkData();
       if(data.edges.length<data.nodes.length/2){
         alert('Every concept should has at least one link conneted to other concepts');
@@ -137,17 +158,17 @@ class Course extends Component {
         alert('At least 5 concepts are required')
       }
       else{
-        firebase.database().ref(REF(this.state.courseId,this.props.uid).STAGE2.USER_SAVED_DATA).set(data, (error)=>{
+        firebase.database().ref(DATAREF(this.state.courseId,this.props.uid, stage).USER_SAVED_DATA).set(data, (error)=>{
           if(error){
 
           }else{
             this.onSubmitProgress()
-            httpGet('http://140.114.79.99:5000/videoscape/api/'+this.state.courseId+'/process/stage2',this.onSubmitSuccess)
+            httpGet('http://140.114.79.99:5000/videoscape/api/'+this.state.courseId+'/process/'+stage,this.onSubmitSuccess)
           }
         })
       }
     }
-    else if(this.state.stage===3){ //Stage 3
+    else if(stage==='3_1'||stage==='3_2'){ //Stage 3
       data = this.conceptmap2.getNetworkData();
         //check all the labels
       var links = data.edges;
@@ -160,7 +181,7 @@ class Course extends Component {
       }
       if(flag)alert('Each link should has a link phrase');
       else{
-         firebase.database().ref(REF(this.state.courseId,this.props.uid).STAGE3.USER_SAVED_DATA).set(data, (error)=>{
+         firebase.database().ref(DATAREF(this.state.courseId,this.props.uid, stage).USER_SAVED_DATA).set(data, (error)=>{
           if(error){
           //do something if save failed
           }else{
@@ -224,26 +245,26 @@ class Course extends Component {
   render() {
     return (
       <div className='flex-column' style={{height:'100%', padding:'20px'}}>
-        <div className='flex' style={{flexBasis:'100px'}}>
-          <div className='save-map'>
-            <Spin spinning={this.state.submitting} delay={500} >
-              <RaisedButton label="Submit my result" onClick={()=>this.saveResult()}/>
-            </Spin>
-            
-            <Snackbar
-              open={this.state.snakbarOpen}
-              message="Your result is saved! Good job :)"
-              autoHideDuration={4000}
-              onRequestClose={this.handleSnackbarClose}
-            />
+        <Snackbar
+                open={this.state.snakbarOpen}
+                message="Your result is saved! Good job :)"
+                autoHideDuration={4000}
+                onRequestClose={this.handleSnackbarClose}
+        ></Snackbar>
+
+        <div className='flex' style={{flexBasis:'150px', justifyContent:'space-between'}}>
+          <div className='flex-column' style={{flex: '1 1 60%'}}>
+            <ProgressStepper style={{maxWidth:'70%'}} stage={this.state.stage}/>
+            <div style={{fontSize: '1.3em', fontWeight: '400', color:'black'}}>{this.state.instruction}</div>
           </div>
-          <ProgressStepper className='progressStepper' stage={this.state.stage}/>
-          <div className='map-info'>
-            <FlatButton
-                  icon={<HelpIcon />}
-                  label='Help'
-                  style={{float:'right', minWidth:'36px', display:'inline'}}
-                  onTouchTap={this.handleToggle}/>
+          <div className='flex-column' style={{flex: '0 0 200px'}}>
+              <Spin spinning={this.state.submitting} delay={500} >
+                <RaisedButton label="Submit my result" onClick={()=>this.saveResult()}/>
+              </Spin>
+              <FlatButton
+                    icon={<HelpIcon />}
+                    label='Help'
+                    onTouchTap={this.handleToggle}/>
           </div>
         </div>
 
@@ -265,12 +286,13 @@ class Course extends Component {
                     courseId={this.state.courseId}
                     uid={this.props.uid}
                     className='flex' 
-                    graphData={this.state.graphData} 
+                    data={this.state.data} 
                     colors={this.state.colors}
                     jumpToVideoTime={this.jumpToVideoTime}
                     getTimeStamp={this.getTimeStamp}
                     videoTime={this.state.videoTime}
                     stage={this.state.stage}
+                    graphParameter={this.state.graphParameter}
                     mode={{addNode:'add-node', editNode:'edit-node', editEdge:'edit-edge'}}
                     ref={o=>{this.conceptmap1 = o}}/>
                 </Stage2>
@@ -279,12 +301,13 @@ class Course extends Component {
                     courseId={this.state.courseId}
                     uid={this.props.uid}
                     className='flex' 
-                    graphData={this.state.graphData} 
+                    data={this.state.data} 
                     colors={this.state.colors}
                     jumpToVideoTime={this.jumpToVideoTime}
                     getTimeStamp={this.getTimeStamp}
                     videoTime={this.state.videoTime}
                     stage={this.state.stage}
+                    graphParameter={this.state.graphParameter}
                     mode={{addNode:'none', editNode:'none', editEdge:'edit-edge'}}
                     ref={o=>{this.conceptmap2 = o}}/>
                 </Stage3>
