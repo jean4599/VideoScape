@@ -2,12 +2,12 @@ import firebase from 'firebase'
 
  // Initialize Firebase
  var config = {
-    apiKey: "AIzaSyAr3UJmPNlfwPWvr1JVmGCMk79UfJrj8co",
-    authDomain: "beta-videoscape.firebaseapp.com",
-    databaseURL: "https://beta-videoscape.firebaseio.com",
-    projectId: "beta-videoscape",
-    storageBucket: "beta-videoscape.appspot.com",
-    messagingSenderId: "550456750854"
+    apiKey: "AIzaSyBHDQZBVBpXTHp0S0oJN-XS0Qj_pWdmrSw",
+    authDomain: "videoscape-b857c.firebaseapp.com",
+    databaseURL: "https://videoscape-b857c.firebaseio.com",
+    projectId: "videoscape-b857c",
+    storageBucket: "videoscape-b857c.appspot.com",
+    messagingSenderId: "719154567638"
   };
   firebase.initializeApp(config);
 
