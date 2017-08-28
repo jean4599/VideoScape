@@ -157,7 +157,7 @@ export default class Network extends Component {
 	    });
 	    this.network.on("dragStart",(params)=>{
 	    	this.setState({dragging:true})
-	    	this.network.setOptions({physics:false})
+	    	this.network.setOptions({physics: false})
 	    })
 	    
 	    this.network.on("click", (params)=>{

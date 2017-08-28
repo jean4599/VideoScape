@@ -45,7 +45,7 @@ export const defaultProps = {
 			      iterations: 1000,
 			      updateInterval: 50,
 			      onlyDynamicEdges: false,
-			      fit: false
+			      fit: true
 			    },
 			},
 	    	edges:{
