@@ -54,26 +54,37 @@ const Stage2 = (
         </div>
 )
 const Stage3 = (
-		<div style={{padding:'10px'}}>
-	        <h3>What is concept map?</h3>
-
-        	<h3 id="what-can-i-do-">What can I do?</h3>
-			<h4 id="improve-the-concept-map-by-">Improve a concept map by...</h4>
+		<div style={styles.container}>
+			<p className='text'> Practice 3: Add link phrases </p>
+			<p> Beside the video, there is a canvas, where you can make a concept map to represent your understanding on the lecture. 
+			A concept map is a graph consisted of nodes(concepts), links(relationship of concepts), and link phrases(label on the links).
+			Previous learners have make contrubution to the concept map, their aggregation result is shown on the canvas </p>
 			
-			<p><strong>Add link:</strong> Click on the &#39;Add link&#39; button (shortcut: ctrl-shit / mac user: cmd-shift) and then drag-and-drop from the starting concept to the target concept.</p>
-			<p style={{color:'red'}}><strong>Add link phrase / Edit link phrase:</strong> Click on the link and type the link phrase in the input area (on the bottom).</p>
-			<p><strong>Move concept(s): </strong>You can drag on concept to move it or drag the canvas (any white space) to move the whole concept map.</p>
-			<p><strong>Zoom in/out concept map </strong>You can <em>scroll</em> on the concept map to zoom in and out the view.</p>
+			<p className='text'> Add and edit link phrases </p>
+        	<p> Click on the link, and you can edit the label</p>
+        	<img src='/image/demo3-link-phrase.gif' alt='demo edit concept'/>
 
-			<h4 id="use-the-concept-map-to-">Use the concept map to...</h4>
-			<p><strong>Check current lecture progress:</strong> We highlight the concepts that are covered by the video with orange colors.</p>
-			<p><strong>Navigate video:</strong> You can <em>double click</em> one concept to jump to according video time.</p>
-			<p><strong>Review the lecture:</strong> You can review the concept map even after listing the lecture.</p>
+			<p className='text'> Link concepts and delete links</p>
+			<p>You can drag to move the concepts. When you want to make a link, click on 'Add link' button and drag-and-drop from starting concept to end concept.
+			If you want to delete links, click on the link and you will see a delete button.</p>
+			<img src='/image/demo2-link.gif' alt='demo linking'/>
+	        
+	        <p className='text'> Add concepts & use concept to navigate the video </p>
+	        <p> You can also create new concepts. Our system will automatically generate a video timestamp on that concept.
+	        All concepts (except for blue color ones) have timestamps which allow you to jump to according video section by double clicking the concept.</p>
+        	<img src='/image/demo2-add-navigate.gif' alt='demo add concept'/>
+
+        	<p className='text'> Zoom and Move </p>
+        	<p>Scroll on the canvas can zoom in/out the scene, and drag on white space can move the whole graph.</p>
+        	<img src='/image/demo2-move.gif' alt='demo zoom and move'/>
+
+        	<p className='text'> Submit your result! </p>
+        	<p>Remember to submit your result! If you got a success message, you will get access to post-test :)</p>
+			<img src='/image/demo2-save.gif' alt='demo submit result'/>
         </div>
 )
 const Help =({stage})=>{
 	var target = null;
-	console.log('Stage: '+stage)
     switch(stage){
     	case '1_1':
     	case '1_2':

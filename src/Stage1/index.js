@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import * as firebase from 'firebase'
-import {REF} from '../Firebase'
+import {DATAREF} from '../Firebase'
 import { Input, Timeline, Col, Row, Button } from 'antd'
 import {toArray} from '../utils'
 import Concept from './Concept'
@@ -23,11 +23,17 @@ export default class ConceptExtraction extends Component{
 			uid: this.props.uid,
 	}
 	componentDidMount(){
-		this.fire = firebase.database().ref(REF(this.state.courseId, this.state.uid).STAGE1.REAL_TIME_DATA);
-		this.fire.on('value', this.updateConcepts);
+		this.fire = firebase.database().ref(DATAREF(this.state.courseId, this.state.uid, this.props.stage).REAL_TIME_DATA)
+		this.fire.orderByChild("time").on('value',(snapshot)=>{  
+            var array=[]
+          	snapshot.forEach(function(childSnapshot){
+            	array.push(childSnapshot.val())
+            })
+            this.setState({concepts: array})
+        })
 	}
 	componentDidUpdate(){
-		this.container.scrollTop = this.container.scrollHeight;
+		//this.container.scrollTop = this.container.scrollHeight;
 	}
 	updateConcepts(snapshot){
 		var conceptsArray = toArray(snapshot.val());
@@ -42,18 +48,18 @@ export default class ConceptExtraction extends Component{
 			time -= minus_time;
 		}
 		var key = this.fire.push({
-			word: this.state.conceptInputValue,
+			label: this.state.conceptInputValue,
 			time: time
 		}).key;
-		firebase.database().ref(REF(this.state.courseId, this.state.uid).STAGE1.REAL_TIME_DATA + '/'+key).update({id: key})
+		firebase.database().ref(DATAREF(this.state.courseId, this.state.uid, this.props.stage).REAL_TIME_DATA + '/'+key).update({id: key})
 		this.setState({conceptInputValue:''})
 		this.container.scrollTop = this.container.scrollHeight;
 	}
 	deleteConcept(id){
-		firebase.database().ref(REF(this.state.courseId, this.state.uid).STAGE1.REAL_TIME_DATA+'/'+id).remove();
+		firebase.database().ref(DATAREF(this.state.courseId, this.state.uid, this.props.stage).REAL_TIME_DATA+'/'+id).remove();
 	}
 	editConcept(id, label, time){
-		firebase.database().ref(REF(this.state.courseId, this.state.uid).STAGE1.REAL_TIME_DATA+'/'+id).update({word:label, time:time});
+		firebase.database().ref(DATAREF(this.state.courseId, this.state.uid, this.props.stage).REAL_TIME_DATA+'/'+id).update({label:label, time:time});
 	}
 	handleConceptInputVlueChange(e){
 		this.setState({
@@ -70,25 +76,27 @@ export default class ConceptExtraction extends Component{
 		return this.state.concepts;
 	}
 	render(){
-		return (
-			<div ref={t=>{this.container = t}} style={{padding:'10px 30px', height:'inherit', display:'flex', flexDirection:'column', overflowY: 'scroll'}}>
-				<div>
-					{this.state.concepts.map((concept,index)=>{
+		var list = this.state.concepts.map((concept,index)=>{
 					return  <Timeline.Item key={index}>
 								<Concept 
 									id={concept.id}
-									concept={concept.word}
+									concept={concept.label}
 									time={concept.time}
 									played={concept.played}
+									pause={this.props.pause}
 									jumpToTime={this.props.jumpToVideoTime}
 									deleteConcept={this.deleteConcept}
 									editConcept={this.editConcept}
 									getCurrentTime={this.getCurrentTime}/>
 							</Timeline.Item>
-					})}
+					})
+		return (
+			<div ref={t=>{this.container = t}} style={{padding:'10px 30px', height:'inherit', display:'flex', flexDirection:'column', overflowY: 'scroll'}}>
+				<div>
+					{list}
 				</div>
 				<Row>
-					<Col span={20}><Input placeholder="New concept: word or phrases, ex: water, learning science" onPressEnter={()=>this.addConcept()} value={this.state.conceptInputValue} onChange={this.handleConceptInputVlueChange}/></Col>
+					<Col span={20}><Input placeholder="New concept: label or phrases, ex: water, learning science" onPressEnter={()=>this.addConcept()} value={this.state.conceptInputValue} onChange={this.handleConceptInputVlueChange}/></Col>
 					<Col span={4}><Button type="primary" onClick={()=>this.addConcept()}>Add</Button></Col>
 				</Row>
 				<p> 

@@ -15,10 +15,14 @@ export default class Concept extends Component{
 		time:this.props.time,
 		mode: 'view',
 	}
+	componentWillReceiveProps(nextProps){
+		if(nextProps!=this.props)this.setState({concept: nextProps.concept, time:nextProps.time})
+	}
 	onChangeConcept(e){
 		this.setState({ concept: e.target.value });
 	}
 	startEditConcept(){
+		this.props.pause();
 		this.setState({mode: 'edit'})
 	}
 	finishEditConcept(){
@@ -27,15 +31,16 @@ export default class Concept extends Component{
 	}
 	setConceptToCurrentTime(){
 		var time = this.props.getCurrentTime();
-		this.setState({ time:time})
+		this.props.editConcept(this.props.id, this.state.concept, time)
+		this.setState({mode: 'view', time:time})
 	}
 	render(){
 		return (
 			<div>
 				<div style={{display:'flex', width:'100%'}}>
 					<p style={{margin:'0px 10px',cursor: 'pointer', flex:'1 1 90%', display:(this.state.mode==='view')?'flex':'none'}}
-						onClick={()=>this.props.jumpToTime(this.props.time)}>
-						{this.props.concept}
+						onClick={()=>this.props.jumpToTime(this.state.time)}>
+						{this.state.concept}
 						<Duration seconds={this.state.time} style={{margin:'0px 10px'}}/>
 					</p>
 					

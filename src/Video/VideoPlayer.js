@@ -37,6 +37,9 @@ export default class VideoPlayer extends Component{
   seekTo(time){
     this.player.seekTo(time);
   }
+  pause(){
+    this.setState({ playing: false })
+  }
   playPause(){
     this.setState({ playing: !this.state.playing })
   }

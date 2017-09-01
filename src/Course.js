@@ -23,12 +23,14 @@ import {Spin} from 'antd';
 import {withRouter} from "react-router-dom";
 
 injectTapEventPlugin();
-
+const server='http://140.114.79.99:5000/videoscape/api/';
+//const server='http://127.0.0.1:5000/videoscape/api/'
 class Course extends Component {
   constructor(props) {
     super(props);
     this.getTimeStamp = this.getTimeStamp.bind(this);
     this.updateVideoTime = this.updateVideoTime.bind(this);
+    this.pause = this.pause.bind(this)
 
     this.handleDragStart = this.handleDragStart.bind(this);
     this.handleDragEnd = this.handleDragEnd.bind(this);
@@ -71,11 +73,7 @@ class Course extends Component {
           case '1_3':
             var concepts = [];
             firebase.database().ref(DATAREF(courseId, this.props.uid, stage).INITIAL_DATA).orderByChild("time").once('value').then((snapshot)=>{  
-              snapshot.forEach(function(childSnapshot){
-                concepts.push(childSnapshot.val())
-              })
-              console.log(concepts)
-              this.setState({data: concepts})
+                firebase.database().ref(DATAREF(courseId, this.props.uid, stage).REAL_TIME_DATA).set(snapshot.val())
             })
             break;
           case '2_1':
@@ -102,8 +100,8 @@ class Course extends Component {
               })
             })
             break;
-          case '3-1':
-          case '3-2':
+          case '3_1':
+          case '3_2':
             firebase.database().ref(DATAREF(courseId, this.props.uid, stage).INITIAL_DATA).once('value').then((snapshot)=>{
               console.log(snapshot.val())
               this.setState({data: snapshot.val()})
@@ -142,7 +140,7 @@ class Course extends Component {
 
           }else{
             this.onSubmitProgress()
-            httpGet('http://140.114.79.99:5000/videoscape/api/'+this.state.courseId+'/process/'+stage,this.onSubmitSuccess)
+            httpGet(server+this.state.courseId+'/process/'+'stage1/'+stage,this.onSubmitSuccess)
           }
         })
       }else{
@@ -163,7 +161,7 @@ class Course extends Component {
 
           }else{
             this.onSubmitProgress()
-            httpGet('http://140.114.79.99:5000/videoscape/api/'+this.state.courseId+'/process/'+stage,this.onSubmitSuccess)
+            httpGet(server+this.state.courseId+'/process/'+'stage2/'+stage,this.onSubmitSuccess)
           }
         })
       }
@@ -185,8 +183,8 @@ class Course extends Component {
           if(error){
           //do something if save failed
           }else{
-            this.props.handleStageFinish(this.state.courseId);
-            this.setState({snakbarOpen:true})
+            this.onSubmitProgress()
+            httpGet(server+this.state.courseId+'/process/'+'stage3/'+stage,this.onSubmitSuccess)
           }
         })
       }
@@ -213,6 +211,9 @@ class Course extends Component {
   }
   jumpToVideoTime(time){
     this.refs.player.jumpToTime(time);
+  }
+  pause(){
+    this.refs.player.pause();
   }
   handleDragStart() {
       this.setState({
@@ -278,7 +279,9 @@ class Course extends Component {
                 <Stage1
                   courseId={this.state.courseId}
                   uid={this.props.uid}
+                  stage={this.state.stage}
                   getTimeStamp={this.getTimeStamp}
+                  pause={this.pause}
                   jumpToVideoTime={this.jumpToVideoTime}
                   ref={o=>{this.conceptExtraction = o}}/>
                 <Stage2 style={{width:'100%', height:'100%'}}>
